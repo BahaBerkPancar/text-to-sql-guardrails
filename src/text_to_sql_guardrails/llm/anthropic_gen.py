@@ -85,6 +85,12 @@ class AnthropicGenerator:
             )
         except anthropic.AuthenticationError:
             raise LlmNotConfigured("Anthropic credentials are not configured") from None
+        except TypeError as error:
+            # The SDK builds a client without credentials and raises this TypeError
+            # ("Could not resolve authentication method") only when a request is made.
+            if "authentication" not in str(error).lower():
+                raise
+            raise LlmNotConfigured("Anthropic credentials are not configured") from None
         except anthropic.RateLimitError:
             raise LlmFailed("Anthropic rate limit exceeded") from None
         except anthropic.APIStatusError:
@@ -131,4 +137,10 @@ class AnthropicGenerator:
             model=response.model,
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
+            cache_read_input_tokens=(
+                getattr(response.usage, "cache_read_input_tokens", None) or 0
+            ),
+            cache_creation_input_tokens=(
+                getattr(response.usage, "cache_creation_input_tokens", None) or 0
+            ),
         )

@@ -7,6 +7,8 @@ import hashlib
 import json
 import os
 import platform
+import sys
+import tempfile
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time
@@ -588,18 +590,40 @@ def update_readme(report: dict[str, Any], path: str | Path) -> None:
     readme.write_text(before + generated + after, encoding="utf-8")
 
 
-def main() -> None:
+def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("guardrails",), default="guardrails")
+    parser.add_argument("--mode", choices=("guardrails", "llm"), default="guardrails")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--update-readme", action="store_true")
-    parser.add_argument("--out", type=Path, default=Path("bench/results"))
-    args = parser.parse_args()
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("--model")
+    parser.add_argument("--effort", choices=("low", "medium", "high"))
+    parser.add_argument("--limit", type=int)
+    parser.add_argument("--only", choices=("questions", "attacks"))
+    parser.add_argument("--yes-spend", action="store_true")
+    parser.add_argument("--fake", action="store_true")
+    return parser
+
+
+def _guardrails_cli(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    if any(
+        value
+        for value in (
+            args.model,
+            args.effort,
+            args.limit,
+            args.only,
+            args.yes_spend,
+            args.fake,
+        )
+    ):
+        parser.error("LLM options require --mode llm")
 
     database_url = os.getenv("TEST_DATABASE_URL")
     if not database_url:
         parser.error("TEST_DATABASE_URL is required for the guardrails benchmark")
-    out_dir = args.out if args.out.is_absolute() else ROOT / args.out
+    selected_out = args.out or Path("bench/results")
+    out_dir = selected_out if selected_out.is_absolute() else ROOT / selected_out
     attacks = load_attacks(ROOT / "bench/attacks.yaml")
     questions = load_questions(ROOT / "bench/questions.yaml")
     policy = load_policy(ROOT / "config/policy.toml")
@@ -618,10 +642,132 @@ def main() -> None:
         if failures:
             for failure in failures:
                 print(f"CHECK FAILED: {failure}")
-            raise SystemExit(1)
+            return 1
     finally:
         readonly_engine.dispose()
         admin_engine.dispose()
+    return 0
+
+
+def _llm_cli(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from text_to_sql_guardrails.bench import llm as llm_bench
+    from text_to_sql_guardrails.bench.data import load_attack_prompts
+    from text_to_sql_guardrails.config import Settings
+    from text_to_sql_guardrails.llm.anthropic_gen import AnthropicGenerator
+    from text_to_sql_guardrails.llm.base import LlmNotConfigured
+    from text_to_sql_guardrails.llm.prompt import build_schema_prompt
+
+    if args.check:
+        parser.error("--check is guardrails-only; LLM mode has no CI gate")
+    if not args.model or not args.effort:
+        parser.error("--mode llm requires --model and --effort")
+    if args.limit is not None and args.limit < 1:
+        parser.error("--limit must be at least 1")
+    if args.fake and args.yes_spend:
+        parser.error("--fake and --yes-spend cannot be used together")
+    if args.fake and args.update_readme:
+        parser.error("fake benchmark results cannot update README")
+
+    questions = load_questions(ROOT / "bench/questions.yaml")
+    attacks = load_attack_prompts(ROOT / "bench/attack_prompts.yaml")
+    if args.only == "questions":
+        attacks = []
+    elif args.only == "attacks":
+        questions = []
+    if args.limit is not None:
+        questions = questions[: args.limit]
+        attacks = attacks[: args.limit]
+
+    policy = load_policy(ROOT / "config/policy.toml")
+    prices = llm_bench.load_prices(ROOT / "config/prices.toml")
+    if not args.yes_spend and not args.fake:
+        prompts = [question.question for question in questions] + [
+            attack.question for attack in attacks
+        ]
+        estimate = llm_bench.estimate_run_cost(
+            args.model, build_schema_prompt(policy), prompts, prices
+        )
+        print("Cost estimate only; no model API call was made.")
+        print(
+            "Assumptions: two calls per prompt (worst-case retry), "
+            "system + schema + question characters / 4 input tokens (retry adds the "
+            "previous attempt), 400 output tokens per call."
+        )
+        print(
+            f"Prompts: {len(prompts)}; calls: {estimate['calls']}; "
+            f"input tokens: {estimate['input_tokens']}; "
+            f"output tokens: {estimate['output_tokens']}"
+        )
+        if estimate["cost_usd"] is None:
+            print(f"Estimated cost: unknown (no price for {args.model})")
+        else:
+            print(f"Estimated cost: ${estimate['cost_usd']:.6f} USD")
+        print("Re-run with --yes-spend to call the model.")
+        return 0
+
+    database_url = os.getenv("TEST_DATABASE_URL")
+    if not database_url:
+        parser.error("TEST_DATABASE_URL is required to execute the LLM benchmark")
+    if args.fake:
+        generator = llm_bench.GoldSqlGenerator(questions, args.model)
+    else:
+        settings = Settings(
+            _env_file=None,
+            llm_model=args.model,
+            llm_effort=args.effort,
+        )
+        generator = AnthropicGenerator(settings)
+
+    admin_engine, readonly_engine = prepare_database(database_url)
+    try:
+        try:
+            report = llm_bench.run_benchmark(
+                admin_engine,
+                readonly_engine,
+                policy,
+                questions,
+                attacks,
+                generator,
+                prices,
+                model=args.model,
+                effort=args.effort,
+                fake=args.fake,
+            )
+        except LlmNotConfigured:
+            print(
+                "Anthropic credentials are not configured. Use a Console API key or "
+                "run `ant auth login`; a Claude Code login does not count.",
+                file=sys.stderr,
+            )
+            return 2
+        if args.out is not None:
+            out_dir = args.out if args.out.is_absolute() else ROOT / args.out
+        elif args.fake:
+            out_dir = Path(tempfile.mkdtemp(prefix="t2s-bench-fake-"))
+        else:
+            out_dir = ROOT / "bench/results"
+        json_path, markdown_path = llm_bench.write_results(report, out_dir)
+        print(f"Wrote {json_path}")
+        print(f"Wrote {markdown_path}")
+        print(llm_bench.summary(report))
+        if args.update_readme:
+            llm_bench.update_readme(report, ROOT / "README.md")
+    finally:
+        readonly_engine.dispose()
+        admin_engine.dispose()
+    return 0
+
+
+def cli(argv: list[str] | None = None) -> int:
+    parser = _parser()
+    args = parser.parse_args(argv)
+    if args.mode == "llm":
+        return _llm_cli(args, parser)
+    return _guardrails_cli(args, parser)
+
+
+def main() -> None:
+    raise SystemExit(cli())
 
 
 if __name__ == "__main__":

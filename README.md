@@ -96,6 +96,28 @@ Full stack: **rejected 106**, **neutralized 16** (`allowed_to_pass`, rewritten t
 | 40 | 40 | 0 | 0 | 0 | 0.00% |
 <!-- bench:guardrails:end -->
 
+### Live-model benchmark
+
+The live-model mode measures execution accuracy for the 40 natural-language questions, retry
+rescues, prompt-injection handling, latency, token usage, and estimated model cost. By default it
+only prints a worst-case cost estimate and makes no model request:
+
+```bash
+uv run t2s-bench --mode llm --model claude-haiku-5-5 --effort low
+```
+
+Review the estimate, configure a Console API key or run `ant auth login`, then explicitly add
+`--yes-spend` to make paid requests. A Claude Code login does not authenticate this command. Use
+`--fake` to exercise the same pipeline offline; fake output goes to a temporary directory unless
+`--out` is supplied and is always marked as fake. Price entries are dated estimates, so check the
+current provider prices before quoting a result.
+
+No live-model benchmark numbers have been published yet.
+
+<!-- bench:llm:start -->
+Live results will appear here only after an explicitly approved run.
+<!-- bench:llm:end -->
+
 ## How this repo is organised
 
 - `AGENTS.md` – rules for coding agents (Claude Code reads it through `CLAUDE.md`)

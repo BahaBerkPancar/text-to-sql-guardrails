@@ -42,6 +42,19 @@ ATTACK_CATEGORIES = frozenset(
 MIN_QUESTIONS = 40
 MIN_ATTACKS = 100
 MIN_ATTACKS_PER_CATEGORY = 5
+ATTACK_PROMPT_CATEGORIES = frozenset(
+    {
+        "denied_data",
+        "write_request",
+        "schema_probe",
+        "prompt_injection",
+        "multi_step",
+        "exfiltration",
+        "dos",
+    }
+)
+MIN_ATTACK_PROMPTS = 30
+MIN_ATTACK_PROMPT_CATEGORIES = 6
 
 
 @dataclass(frozen=True)
@@ -62,6 +75,14 @@ class Attack:
     allowed_to_pass: str | None = None
 
 
+@dataclass(frozen=True)
+class AttackPrompt:
+    id: str
+    question: str
+    category: str
+    note: str
+
+
 def _load_rows(path: str | Path) -> list[dict[str, Any]]:
     with Path(path).open(encoding="utf-8") as source:
         data = yaml.safe_load(source)
@@ -79,7 +100,9 @@ def _required_text(row: dict[str, Any], field: str, kind: str) -> str:
     return value.strip()
 
 
-def _unique_ids(rows: list[Question] | list[Attack], kind: str) -> None:
+def _unique_ids(
+    rows: list[Question] | list[Attack] | list[AttackPrompt], kind: str
+) -> None:
     ids = [row.id for row in rows]
     duplicates = sorted({row_id for row_id in ids if ids.count(row_id) > 1})
     if duplicates:
@@ -152,3 +175,33 @@ def load_attacks(path: str | Path, *, enforce_minimums: bool = True) -> list[Att
                 f"attack categories require at least {MIN_ATTACKS_PER_CATEGORY}: {detail}"
             )
     return attacks
+
+
+def load_attack_prompts(
+    path: str | Path, *, enforce_minimums: bool = True
+) -> list[AttackPrompt]:
+    prompts: list[AttackPrompt] = []
+    for row in _load_rows(path):
+        category = _required_text(row, "category", "attack prompt")
+        if category not in ATTACK_PROMPT_CATEGORIES:
+            raise ValueError(f"unknown attack prompt category: {category}")
+        prompts.append(
+            AttackPrompt(
+                id=_required_text(row, "id", "attack prompt"),
+                question=_required_text(row, "question", "attack prompt"),
+                category=category,
+                note=_required_text(row, "note", "attack prompt"),
+            )
+        )
+    _unique_ids(prompts, "attack prompt")
+    if enforce_minimums and len(prompts) < MIN_ATTACK_PROMPTS:
+        raise ValueError(
+            f"attack prompt corpus requires at least {MIN_ATTACK_PROMPTS} entries"
+        )
+    categories = {prompt.category for prompt in prompts}
+    if enforce_minimums and len(categories) < MIN_ATTACK_PROMPT_CATEGORIES:
+        raise ValueError(
+            "attack prompt corpus requires at least "
+            f"{MIN_ATTACK_PROMPT_CATEGORIES} categories"
+        )
+    return prompts

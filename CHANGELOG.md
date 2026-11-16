@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Add an opt-in live-model benchmark with natural-language attacks, execution-accuracy scoring,
+  retry, latency, token and cost metrics, plus a fully offline fake mode.
 - Harden raw database execution to reject stacked commands and discard pooled session state,
   including advisory locks and settings, after every query.
 - Add an offline guardrail benchmark with 130 attacks, 40 normal queries, per-layer harm checks,

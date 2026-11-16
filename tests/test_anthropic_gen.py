@@ -25,7 +25,12 @@ def _response(
         stop_reason=stop_reason,
         content=[SimpleNamespace(type="text", text=payload)],
         model="claude-opus-5-5",
-        usage=SimpleNamespace(input_tokens=12, output_tokens=7),
+        usage=SimpleNamespace(
+            input_tokens=12,
+            output_tokens=7,
+            cache_read_input_tokens=5,
+            cache_creation_input_tokens=3,
+        ),
     )
 
 
@@ -58,6 +63,8 @@ def test_builds_current_structured_output_request_and_parses_response():
     assert result.cannot_answer is None
     assert result.input_tokens == 12
     assert result.output_tokens == 7
+    assert result.cache_read_input_tokens == 5
+    assert result.cache_creation_input_tokens == 3
     kwargs = create.call_args.kwargs
     assert kwargs["model"] == "claude-opus-5-5"
     assert kwargs["max_tokens"] == 4000
@@ -109,3 +116,32 @@ def test_client_is_lazy_and_missing_credentials_are_mapped(monkeypatch):
     with pytest.raises(LlmNotConfigured):
         generator.generate("q", "schema", [])
     constructor.assert_called_once_with(timeout=60, max_retries=2)
+
+
+def test_request_time_missing_credentials_are_mapped():
+    # anthropic 2.x builds a client without credentials and fails only on request.
+    client, _ = _client(
+        error=TypeError("Could not resolve authentication method. Expected one of api_key")
+    )
+
+    with pytest.raises(LlmNotConfigured):
+        AnthropicGenerator(Settings(), client=client).generate("q", "schema", [])
+
+
+def test_unrelated_type_errors_are_not_hidden():
+    client, _ = _client(error=TypeError("unexpected keyword argument"))
+
+    with pytest.raises(TypeError):
+        AnthropicGenerator(Settings(), client=client).generate("q", "schema", [])
+
+
+def test_missing_cache_usage_fields_default_to_zero():
+    response = _response()
+    response.usage.cache_read_input_tokens = None
+    response.usage.cache_creation_input_tokens = None
+    client, _ = _client(response)
+
+    result = AnthropicGenerator(Settings(), client=client).generate("q", "schema", [])
+
+    assert result.cache_read_input_tokens == 0
+    assert result.cache_creation_input_tokens == 0

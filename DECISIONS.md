@@ -2,6 +2,22 @@
 
 Newest first. One entry per decision: date, what was decided, why, and what was rejected.
 
+## 2026-11-17 – Make live benchmarking explicit, comparable, and reproducible
+Live-model benchmark commands estimate the worst-case cost and stop before constructing a model
+client unless `--yes-spend` is present. Implicit paid calls were rejected because a typo or routine
+test command must not spend money. Fake mode returns each gold SQL and declines attacks so the real
+pipeline, reports, and database checks can be tested offline; treating fake results as model
+performance or publishing them to the normal results directory was rejected.
+
+Result correctness compares cell values rather than aliases. Rows are order-insensitive unless the
+gold query's outermost statement has `ORDER BY`, and numeric values allow an absolute difference of
+0.01. Exact SQL-text comparison was rejected because equivalent SQL can use different joins,
+aliases, and expressions, while always ignoring order would miss ordering mistakes users asked for.
+
+Per-model prices live in a dated configuration file, cache reads and writes use their provider
+multipliers, and unknown models report a null cost. Reporting zero for an unknown price was rejected
+because it would present missing information as a free run.
+
 ## 2026-11-17 – Make the database executor a one-statement, stateless boundary
 Generated SQL runs through psycopg's prepared extended-query protocol even when it has no bind
 parameters. The simple protocol was rejected because it accepts multiple semicolon-separated
