@@ -5,6 +5,11 @@ services:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     environment:
       DATABASE_URL: postgresql+psycopg://app:${POSTGRES_PASSWORD:-app}@db:5432/app
+      READONLY_DATABASE_URL: postgresql+psycopg://t2s_readonly:${READONLY_PASSWORD:-readonly}@db:5432/app
+      READONLY_ROLE: t2s_readonly
+      READONLY_PASSWORD: ${READONLY_PASSWORD:-readonly}
+      STATEMENT_TIMEOUT_MS: 3000
+      POLICY_PATH: config/policy.toml
     depends_on:
       db:
         condition: service_healthy
