@@ -2,6 +2,21 @@
 
 Newest first. One entry per decision: date, what was decided, why, and what was rejected.
 
+## 2026-11-16 – Generate structured SQL with Claude behind the guardrails
+Claude Opus 5.5 at medium effort is the initial default because correctness is the priority for the
+first end-to-end version. Both model and effort remain configurable, and M4's benchmark will compare
+cheaper models and effort levels before the default changes.
+
+The generator uses Anthropic structured JSON output rather than tool use. The response has exactly
+two fields (`sql` and `cannot_answer`), which keeps parsing narrow while the existing validator and
+database role remain the authority. The stable system and policy-filtered schema prompt use prompt
+caching; the untrusted question and any retry feedback remain separate message turns.
+
+A validation failure or ordinary query failure gets one repair attempt because those failures may
+come from model mistakes. Permission failures and statement timeouts are not retried: they show a
+guardrail has stopped the query, and asking the model to work around that result would weaken the
+boundary.
+
 ## 2026-11-16 – Enforce database access from the same policy as validation
 The setup command generates column-level PostgreSQL grants from `config/policy.toml`, so the
 database role cannot read a sensitive column even if application validation is bypassed. A manually

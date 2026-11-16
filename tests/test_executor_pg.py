@@ -49,6 +49,43 @@ def test_layer_2_role_allows_policy_columns(pg_engines):
     assert name == "Customer 001"
 
 
+def test_layer_2_grants_block_writes_even_when_read_only_default_is_disabled(
+    pg_engines,
+):
+    _, readonly_engine = pg_engines
+
+    with readonly_engine.connect() as connection:
+        connection.execute(text("SET default_transaction_read_only = off"))
+        connection.commit()
+        with pytest.raises(DBAPIError) as caught:
+            connection.execute(text("DELETE FROM orders WHERE id = -1"))
+
+    assert caught.value.orig.sqlstate == "42501"
+
+
+def test_executor_preserves_colons_and_percent_signs_in_literals(pg_engines):
+    _, readonly_engine = pg_engines
+
+    result = run_readonly(
+        "SELECT name FROM products WHERE name <> 'a:b %' ORDER BY id LIMIT 1",
+        readonly_engine,
+        timeout_ms=3_000,
+        max_rows=10,
+    )
+
+    assert result.rows == [["Product 01"]]
+
+    literal = run_readonly(
+        "SELECT 'a%' AS x, 't:1' AS y, "
+        "(SELECT count(*) FROM products WHERE name LIKE 'Product 0%') AS n",
+        readonly_engine,
+        timeout_ms=3_000,
+        max_rows=10,
+    )
+    assert literal.rows[0][:2] == ["a%", "t:1"]
+    assert literal.rows[0][2] == 9
+
+
 def test_layer_3_timeout_without_validator(pg_engines):
     admin_engine, _ = pg_engines
     started = time.perf_counter()
@@ -78,4 +115,6 @@ def test_executor_maps_read_only_failures(pg_engines):
     _, readonly_engine = pg_engines
 
     with pytest.raises(QueryPermissionDenied):
-        run_readonly("DELETE FROM orders", readonly_engine, timeout_ms=3_000, max_rows=10)
+        run_readonly(
+            "DELETE FROM orders", readonly_engine, timeout_ms=3_000, max_rows=10
+        )

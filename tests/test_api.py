@@ -5,7 +5,10 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from text_to_sql_guardrails.db import get_readonly_engine
-from text_to_sql_guardrails.main import app
+from text_to_sql_guardrails.guard.executor import QueryResult
+from text_to_sql_guardrails.llm.base import Generation, LlmFailed, LlmNotConfigured
+from text_to_sql_guardrails.llm.fake import FakeGenerator
+from text_to_sql_guardrails.main import app, get_generator
 
 
 def test_health(client):
@@ -46,7 +49,9 @@ def test_query_rejects_more_than_10000_characters(client):
 def test_query_database_error_is_safe(client):
     class BrokenEngine:
         def connect(self):
-            raise SQLAlchemyError("postgresql://secret-user:secret-password@private-host/db")
+            raise SQLAlchemyError(
+                "postgresql://secret-user:secret-password@private-host/db"
+            )
 
     app.dependency_overrides[get_readonly_engine] = lambda: BrokenEngine()
     response = client.post("/query", json={"sql": "SELECT id FROM customers"})
@@ -57,6 +62,60 @@ def test_query_database_error_is_safe(client):
         "stage": "database",
         "error": {"code": "QUERY_FAILED", "message": "Database query failed"},
     }
+
+
+def test_ask_returns_generated_rows_and_usage(client, monkeypatch):
+    fake = FakeGenerator(
+        [Generation("SELECT id FROM orders", None, "test-model", 11, 4)]
+    )
+    app.dependency_overrides[get_generator] = lambda: fake
+    monkeypatch.setattr(
+        "text_to_sql_guardrails.pipeline.run_readonly",
+        lambda *args, **kwargs: QueryResult(["id"], [[1]], 1, False, 0.5),
+    )
+
+    response = client.post("/ask", json={"question": "Show one order"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is True
+    assert body["question"] == "Show one order"
+    assert body["rows"] == [[1]]
+    assert body["attempts"] == [{"sql": "SELECT id FROM orders", "error_code": None}]
+    assert body["model"] == "test-model"
+    assert body["usage"] == {"input_tokens": 11, "output_tokens": 4}
+
+
+@pytest.mark.parametrize(
+    ("error", "status_code", "code"),
+    [
+        (LlmNotConfigured("not configured"), 503, "LLM_NOT_CONFIGURED"),
+        (LlmFailed("provider unavailable"), 502, "LLM_FAILED"),
+    ],
+)
+def test_ask_maps_model_service_errors(client, error, status_code, code):
+    class FailingGenerator:
+        def generate(self, question, schema_prompt, previous):
+            raise error
+
+    app.dependency_overrides[get_generator] = lambda: FailingGenerator()
+
+    response = client.post("/ask", json={"question": "Show orders"})
+
+    assert response.status_code == status_code
+    assert response.json() == {
+        "ok": False,
+        "stage": "model",
+        "error": {"code": code, "message": str(error)},
+        "attempts": [],
+    }
+
+
+@pytest.mark.parametrize("question", ["", "x" * 1_001])
+def test_ask_validates_question_length(client, question):
+    response = client.post("/ask", json={"question": question})
+
+    assert response.status_code == 422
 
 
 @pytest.mark.pg
@@ -76,3 +135,23 @@ def test_end_to_end_aggregate(client, pg_engines):
     assert body["rows"] == expected
     assert body["row_count"] == len(expected)
     assert body["truncated"] is False
+
+
+@pytest.mark.pg
+def test_ask_end_to_end_aggregate_with_fake_generator(client, pg_engines):
+    admin_engine, readonly_engine = pg_engines
+    sql = "SELECT status, count(*) AS count FROM orders GROUP BY status ORDER BY status"
+    fake = FakeGenerator([Generation(sql, None, "test-model", 20, 8)])
+    app.dependency_overrides[get_readonly_engine] = lambda: readonly_engine
+    app.dependency_overrides[get_generator] = lambda: fake
+
+    with admin_engine.connect() as connection:
+        expected = [list(row) for row in connection.execute(text(sql))]
+    response = client.post("/ask", json={"question": "Count orders by status"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["ok"] is True
+    assert body["columns"] == ["status", "count"]
+    assert body["rows"] == expected
+    assert body["row_count"] == len(expected)

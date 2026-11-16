@@ -57,7 +57,9 @@ def _safe_error(error: SQLAlchemyError) -> QueryError:
     return QueryFailed("Database query failed")
 
 
-def run_readonly(sql: str, engine: Engine, timeout_ms: int, max_rows: int) -> QueryResult:
+def run_readonly(
+    sql: str, engine: Engine, timeout_ms: int, max_rows: int
+) -> QueryResult:
     """Run SQL with transaction, timeout, and result-size safeguards."""
 
     if timeout_ms <= 0:
@@ -75,13 +77,15 @@ def run_readonly(sql: str, engine: Engine, timeout_ms: int, max_rows: int) -> Qu
                     text("SELECT set_config('statement_timeout', :timeout, true)"),
                     {"timeout": f"{timeout_ms}ms"},
                 )
-                result = connection.execute(text(sql))
+                driver_sql = sql
+                if engine.dialect.paramstyle in {"format", "pyformat"}:
+                    driver_sql = driver_sql.replace("%", "%%")
+                result = connection.exec_driver_sql(driver_sql)
                 columns = list(result.keys())
                 fetched = result.fetchmany(max_rows + 1)
                 truncated = len(fetched) > max_rows
                 rows = [
-                    [_json_value(value) for value in row]
-                    for row in fetched[:max_rows]
+                    [_json_value(value) for value in row] for row in fetched[:max_rows]
                 ]
             finally:
                 if transaction.is_active:

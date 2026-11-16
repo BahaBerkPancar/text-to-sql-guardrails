@@ -21,6 +21,26 @@ uv run t2s-setup
 uv run uvicorn text_to_sql_guardrails.main:app --reload
 ```
 
+Authenticate Claude by setting `ANTHROPIC_API_KEY` in `.env`, or authenticate the local Anthropic
+CLI with `ant auth login`. The client is created only when `/ask` is called, so `/health`, `/schema`,
+and `/query` work without model credentials.
+
+## Ask a question
+
+`POST /ask` turns a plain-English question into SQL, validates it against the same policy as
+`POST /query`, and executes it with the restricted database role:
+
+```bash
+curl -X POST http://127.0.0.1:8000/ask \
+  -H 'content-type: application/json' \
+  -d '{"question":"How many orders have each status?"}'
+```
+
+The default model is `claude-opus-5-5` at `medium` effort. Configure it with `LLM_MODEL`,
+`LLM_EFFORT`, and `LLM_TIMEOUT_S`. A validator or ordinary database error may be sent back to the
+model for one repair attempt; permission denials and timeouts stop immediately. Every generated SQL
+candidate still passes through the validator, read-only role, transaction, timeout, and row cap.
+
 ## Development
 
 Run the tests:
