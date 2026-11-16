@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Add an offline, responsive demo page for guarded questions and SQL, reproducible screenshots and
+  GIF recording, an architecture diagram, and a security- and benchmark-led README.
 - Add an opt-in live-model benchmark with natural-language attacks, execution-accuracy scoring,
   retry, latency, token and cost metrics, plus a fully offline fake mode.
 - Harden raw database execution to reject stacked commands and discard pooled session state,

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Try guarded text-to-SQL and inspect every safety decision.">
+    <title>text-to-sql guardrails</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">PostgreSQL safety demo</p>
+        <h1>text-to-sql guardrails</h1>
+        <p class="lede">Treat model-generated SQL as untrusted input, then stop unsafe queries in independent layers.</p>
+      </div>
+      <a class="source-link" href="https://github.com/BahaBerkPancar/text-to-sql-guardrails">Source</a>
+    </header>
+
+    <main>
+      <section class="workspace" aria-labelledby="workspace-heading">
+        <h2 id="workspace-heading" class="visually-hidden">Query workspace</h2>
+        <div class="tabs" role="tablist" aria-label="Query mode">
+          <button id="ask-tab" class="tab" type="button" role="tab" aria-selected="true" aria-controls="ask-panel">Ask</button>
+          <button id="sql-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="sql-panel">Run SQL</button>
+        </div>
+
+        <div id="ask-panel" class="mode-panel" role="tabpanel" aria-labelledby="ask-tab">
+          <form id="ask-form">
+            <label for="question">Question</label>
+            <textarea id="question" name="question" rows="4" maxlength="1000" required>How many orders have each status?</textarea>
+            <div class="form-actions">
+              <button class="primary" type="submit">Generate and run</button>
+              <span class="endpoint">POST /ask</span>
+            </div>
+          </form>
+          <div id="model-notice" class="notice" hidden>
+            <p>The model is not configured on this server. The SQL guardrails still work without credentials.</p>
+            <button id="model-fallback" class="text-button" type="button">Try an example in Run SQL</button>
+          </div>
+        </div>
+
+        <div id="sql-panel" class="mode-panel" role="tabpanel" aria-labelledby="sql-tab" hidden>
+          <form id="sql-form">
+            <label for="sql">SQL</label>
+            <textarea id="sql" name="sql" rows="6" maxlength="10000" spellcheck="false">SELECT status, COUNT(*) AS order_count FROM orders GROUP BY status ORDER BY status</textarea>
+            <div class="form-actions">
+              <button class="primary" type="submit">Validate and run</button>
+              <span class="endpoint">POST /query</span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="examples" aria-labelledby="normal-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Known-good SQL</p>
+            <h2 id="normal-heading">Normal queries</h2>
+          </div>
+          <p>Each example comes from the offline benchmark.</p>
+        </div>
+        <div id="normal-examples" class="example-row"></div>
+      </section>
+
+      <section class="examples attacks" aria-labelledby="attack-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Adversarial SQL</p>
+            <h2 id="attack-heading">Try an attack</h2>
+          </div>
+          <p>These are version-controlled benchmark cases, not simulated warnings.</p>
+        </div>
+        <div id="attack-examples" class="example-row"></div>
+      </section>
+
+      <section class="result-section" aria-labelledby="result-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Guarded response</p>
+            <h2 id="result-heading">Result</h2>
+          </div>
+          <p id="request-state" role="status">Ready</p>
+        </div>
+        <div id="result" class="result-panel" aria-live="polite">
+          <p class="empty-state">Run an example to see the rewritten SQL, returned rows, or the layer that blocked it.</p>
+        </div>
+      </section>
+
+      <details class="schema-panel">
+        <summary>Allowed schema</summary>
+        <p>Only these policy-approved tables and columns are visible to the model and validator.</p>
+        <div id="schema"><p class="muted">Loading schema…</p></div>
+      </details>
+    </main>
+
+    <footer>
+      <p>Parser validation, a restricted role, a read-only transaction, a timeout, and a row cap all remain active.</p>
+    </footer>
+  </body>
+</html>

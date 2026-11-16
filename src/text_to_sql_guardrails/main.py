@@ -1,10 +1,12 @@
 """HTTP API for policy inspection and guarded SQL execution."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sqlalchemy.engine import Engine
 
@@ -23,6 +25,19 @@ from .llm.base import LlmFailed, LlmNotConfigured, SqlGenerator
 from .pipeline import AskResult, answer
 
 app = FastAPI(title="text-to-sql-guardrails")
+WEB_DIR = Path(__file__).with_name("web")
+CONTENT_SECURITY_POLICY = (
+    "default-src 'self'; "
+    "script-src 'self'; "
+    "style-src 'self'; "
+    "img-src 'self'; "
+    "connect-src 'self'; "
+    "object-src 'none'; "
+    "base-uri 'none'; "
+    "form-action 'self'; "
+    "frame-ancestors 'none'"
+)
+app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 @lru_cache
@@ -46,6 +61,14 @@ class QueryIn(BaseModel):
 
 class AskIn(BaseModel):
     question: str = Field(min_length=1, max_length=1_000)
+
+
+@app.get("/", include_in_schema=False)
+def demo_page() -> FileResponse:
+    return FileResponse(
+        WEB_DIR / "index.html",
+        headers={"Content-Security-Policy": CONTENT_SECURITY_POLICY},
+    )
 
 
 @app.get("/health")

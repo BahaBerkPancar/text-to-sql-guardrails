@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="310" viewBox="0 0 1200 310" role="img" aria-labelledby="title description">
+  <title id="title">Guarded text-to-SQL architecture</title>
+  <desc id="description">A question flows through an untrusted model, AST validator, read-only database role, read-only transaction, and capped result.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#146c94"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="310" rx="14" fill="#f6f8fa"/>
+  <text x="42" y="46" fill="#1f2933" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="22" font-weight="700">Independent guardrails around untrusted SQL</text>
+  <text x="42" y="72" fill="#5d6b78" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="14">Every candidate is checked before PostgreSQL sees it; the database boundary still enforces safety if validation fails.</text>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+    <g transform="translate(42 105)">
+      <rect width="150" height="135" rx="9" fill="#ffffff" stroke="#cbd3da" stroke-width="2"/>
+      <text x="16" y="31" fill="#146c94" font-size="12" font-weight="700" letter-spacing="1">INPUT</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">Question</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">Plain language</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">from the user</text>
+    </g>
+    <path d="M198 172 H222" fill="none" stroke="#146c94" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(228 105)">
+      <rect width="150" height="135" rx="9" fill="#ffffff" stroke="#cbd3da" stroke-width="2"/>
+      <text x="16" y="31" fill="#9f3a38" font-size="12" font-weight="700" letter-spacing="1">UNTRUSTED</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">Model</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">Produces one SQL</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">candidate</text>
+    </g>
+    <path d="M384 172 H408" fill="none" stroke="#146c94" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(414 105)">
+      <rect width="170" height="135" rx="9" fill="#ffffff" stroke="#146c94" stroke-width="2"/>
+      <text x="16" y="31" fill="#146c94" font-size="12" font-weight="700" letter-spacing="1">LAYER 1</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">AST validator</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">Blocks writes, denied</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">data, unsafe functions</text>
+      <text x="16" y="124" fill="#5d6b78" font-size="13">and stacked SQL</text>
+    </g>
+    <path d="M590 172 H614" fill="none" stroke="#146c94" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(620 105)">
+      <rect width="170" height="135" rx="9" fill="#ffffff" stroke="#146c94" stroke-width="2"/>
+      <text x="16" y="31" fill="#146c94" font-size="12" font-weight="700" letter-spacing="1">LAYER 2</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">Read-only role</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">Denies ungranted</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">tables, columns and</text>
+      <text x="16" y="124" fill="#5d6b78" font-size="13">database writes</text>
+    </g>
+    <path d="M796 172 H820" fill="none" stroke="#146c94" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(826 105)">
+      <rect width="170" height="135" rx="9" fill="#ffffff" stroke="#146c94" stroke-width="2"/>
+      <text x="16" y="31" fill="#146c94" font-size="12" font-weight="700" letter-spacing="1">LAYER 3</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">Read-only txn</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">Blocks writes; timeout</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">stops expensive or</text>
+      <text x="16" y="124" fill="#5d6b78" font-size="13">sleeping statements</text>
+    </g>
+    <path d="M1002 172 H1026" fill="none" stroke="#146c94" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(1032 105)">
+      <rect width="126" height="135" rx="9" fill="#ffffff" stroke="#cbd3da" stroke-width="2"/>
+      <text x="16" y="31" fill="#146c94" font-size="12" font-weight="700" letter-spacing="1">OUTPUT</text>
+      <text x="16" y="58" fill="#1f2933" font-size="18" font-weight="700">Result</text>
+      <text x="16" y="84" fill="#5d6b78" font-size="13">JSON-safe rows</text>
+      <text x="16" y="104" fill="#5d6b78" font-size="13">with a hard cap</text>
+    </g>
+  </g>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12" fill="#5d6b78">
+    <text x="42" y="278">Policy allowlist</text>
+    <path d="M135 274 H574" stroke="#cbd3da" stroke-width="2"/>
+    <text x="620" y="278">PostgreSQL enforcement</text>
+    <path d="M777 274 H996" stroke="#cbd3da" stroke-width="2"/>
+  </g>
+</svg>
