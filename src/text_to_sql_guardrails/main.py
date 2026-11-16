@@ -1,24 +1,37 @@
+"""HTTP API for policy inspection and guarded SQL execution."""
+
+from functools import lru_cache
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel, ConfigDict
-from sqlalchemy.orm import Session
+from fastapi import Depends, FastAPI
+from pydantic import BaseModel, Field
+from sqlalchemy.engine import Engine
 
-from .db import get_session
-from .models import Item
+from .config import settings
+from .db import get_readonly_engine
+from .guard.executor import (
+    QueryFailed,
+    QueryPermissionDenied,
+    QueryTimeout,
+    run_readonly,
+)
+from .guard.policy import Policy, load_policy
+from .guard.validator import validate
 
 app = FastAPI(title="text-to-sql-guardrails")
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
-class ItemIn(BaseModel):
-    name: str
+@lru_cache
+def get_policy() -> Policy:
+    return load_policy(settings.policy_path)
 
 
-class ItemOut(ItemIn):
-    model_config = ConfigDict(from_attributes=True)
+PolicyDep = Annotated[Policy, Depends(get_policy)]
+EngineDep = Annotated[Engine, Depends(get_readonly_engine)]
 
-    id: int
+
+class QueryIn(BaseModel):
+    sql: str = Field(max_length=10_000)
 
 
 @app.get("/health")
@@ -26,18 +39,58 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/items", response_model=ItemOut, status_code=201)
-def create_item(body: ItemIn, session: SessionDep) -> Item:
-    item = Item(name=body.name)
-    session.add(item)
-    session.commit()
-    session.refresh(item)
-    return item
+@app.get("/schema")
+def schema(policy: PolicyDep) -> dict[str, dict[str, list[str]]]:
+    return {
+        "tables": {
+            table: sorted(columns)
+            for table, columns in sorted(policy.tables.items())
+        }
+    }
 
 
-@app.get("/items/{item_id}", response_model=ItemOut)
-def get_item(item_id: int, session: SessionDep) -> Item:
-    item = session.get(Item, item_id)
-    if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return item
+@app.post("/query")
+def query(body: QueryIn, policy: PolicyDep, engine: EngineDep) -> dict[str, object]:
+    validation = validate(body.sql, policy)
+    if not validation.ok:
+        return {
+            "ok": False,
+            "stage": "validator",
+            "violations": [
+                {"code": violation.code.value, "message": violation.message}
+                for violation in validation.violations
+            ],
+        }
+
+    assert validation.sql is not None
+    try:
+        result = run_readonly(
+            validation.sql,
+            engine,
+            timeout_ms=settings.statement_timeout_ms,
+            max_rows=policy.max_limit,
+        )
+    except QueryTimeout as error:
+        return _database_error("TIMEOUT", str(error))
+    except QueryPermissionDenied as error:
+        return _database_error("PERMISSION_DENIED", str(error))
+    except QueryFailed as error:
+        return _database_error("QUERY_FAILED", str(error))
+
+    return {
+        "ok": True,
+        "sql": validation.sql,
+        "columns": result.columns,
+        "rows": result.rows,
+        "row_count": result.row_count,
+        "truncated": result.truncated,
+        "elapsed_ms": result.elapsed_ms,
+    }
+
+
+def _database_error(code: str, message: str) -> dict[str, object]:
+    return {
+        "ok": False,
+        "stage": "database",
+        "error": {"code": code, "message": message},
+    }
