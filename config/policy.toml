@@ -1,0 +1,12 @@
+[limits]
+default_limit = 100
+max_limit = 500
+
+[tables]
+customers = ["id", "name", "city", "country", "created_at"]
+products = ["id", "name", "category", "price"]
+orders = ["id", "customer_id", "status", "ordered_at", "total"]
+order_items = ["id", "order_id", "product_id", "quantity", "unit_price"]
+
+[functions]
+allowed = []
