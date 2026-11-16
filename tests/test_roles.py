@@ -9,22 +9,25 @@ def test_grant_statements_are_column_level_and_safely_quoted():
         max_limit=20,
     )
 
-    statements = grant_statements(policy, 'report"reader')
+    statements = grant_statements(policy, 'report"reader', 4_250)
 
     assert statements == [
         'REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM "report""reader"',
+        'REVOKE CREATE ON SCHEMA public FROM "report""reader"',
         'GRANT USAGE ON SCHEMA public TO "report""reader"',
         (
             'GRANT SELECT ("quote""column", "safe") ON TABLE "public"."odd-table" '
             'TO "report""reader"'
         ),
         'ALTER ROLE "report""reader" SET default_transaction_read_only = on',
-        'ALTER ROLE "report""reader" SET statement_timeout = \'3000ms\'',
+        'ALTER ROLE "report""reader" SET statement_timeout = \'4250ms\'',
     ]
 
 
 def test_demo_policy_never_grants_sensitive_table_or_columns():
-    sql = "\n".join(grant_statements(load_policy("config/policy.toml"), "reader"))
+    sql = "\n".join(
+        grant_statements(load_policy("config/policy.toml"), "reader", 3_000)
+    )
 
     assert '"staff_salaries"' not in sql
     assert '"email"' not in sql

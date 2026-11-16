@@ -45,7 +45,13 @@ def pg_engines() -> Iterator[tuple[Engine, Engine]]:
 
     role = "t2s_readonly_test"
     password = "t2s-readonly-test-password"
-    apply_role(admin_engine, load_policy(ROOT / "config/policy.toml"), role, password)
+    apply_role(
+        admin_engine,
+        load_policy(ROOT / "config/policy.toml"),
+        role,
+        password,
+        statement_timeout_ms=3_000,
+    )
     readonly_url = make_url(database_url).set(username=role, password=password)
     readonly_engine = create_engine(readonly_url)
 

@@ -1,4 +1,16 @@
+from pathlib import Path
+
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def resolve_policy_path(path: str | Path) -> Path:
+    """Resolve a policy path consistently, independent of the current directory."""
+
+    candidate = Path(path)
+    return candidate if candidate.is_absolute() else ROOT / candidate
 
 
 class Settings(BaseSettings):
@@ -12,8 +24,11 @@ class Settings(BaseSettings):
     )
     readonly_role: str = "t2s_readonly"
     readonly_password: str = "change-me"
-    statement_timeout_ms: int = 3_000
+    statement_timeout_ms: int = Field(default=3_000, gt=0)
     policy_path: str = "config/policy.toml"
+    llm_model: str = "claude-opus-5-5"
+    llm_effort: str = "medium"
+    llm_timeout_s: float = Field(default=60, gt=0)
 
 
 settings = Settings()
