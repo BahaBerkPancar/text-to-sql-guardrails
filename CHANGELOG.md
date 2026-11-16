@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- Harden raw database execution to reject stacked commands and discard pooled session state,
+  including advisory locks and settings, after every query.
+- Add an offline guardrail benchmark with 130 attacks, 40 normal queries, per-layer harm checks,
+  machine-readable results, README summaries, and a CI regression gate.
 - Add Claude-powered `POST /ask` with structured generation, one guarded repair attempt, offline
   model tests, and configurable model, effort, and timeout settings.
 - Make the database role timeout configurable, revoke schema creation explicitly, resolve policy

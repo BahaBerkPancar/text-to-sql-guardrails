@@ -1,0 +1,4577 @@
+{
+  "mode": "guardrails",
+  "generated_at": "2026-11-16T21:03:44.012259+00:00",
+  "versions": {
+    "python": "3.12.3",
+    "postgresql": "16.16 (Debian 16.16-1.pgdg13+1)",
+    "sqlglot": "30.31.0",
+    "pyyaml": "6.0.3"
+  },
+  "parameters": {
+    "timeout_ms": 1000,
+    "max_rows": 500
+  },
+  "write_check": {
+    "changed": false,
+    "before": {
+      "alembic_version": {
+        "rows": 1,
+        "sha256": "98ed44074f8b1a7a3e296addba5a0c3af33fde4b28f9970cf9af56b78f4fca5e"
+      },
+      "customers": {
+        "rows": 200,
+        "sha256": "0ea32bb67a2c90140a797e3af16a82f9af175112e442047b1251845b4e750063"
+      },
+      "order_items": {
+        "rows": 2524,
+        "sha256": "96a5e68eb5e8d999de9f801e01569a1b3d88cadb216a1369e5560ee5b776daa7"
+      },
+      "orders": {
+        "rows": 1000,
+        "sha256": "868848c831047b8e1967832daa3506767ab5d2232d38c6f2420cec327095ce8a"
+      },
+      "products": {
+        "rows": 40,
+        "sha256": "c3e5bd910889330379e2246b3ee8e209814fb8f91568a096b0956ee290f751cd"
+      },
+      "staff_salaries": {
+        "rows": 10,
+        "sha256": "4efc6372e6fdb86350c16471e840db72698b246e8d1d01a56876c75ea64d8953"
+      },
+      "sequence:customers_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:order_items_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:orders_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:products_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:staff_salaries_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      }
+    },
+    "after": {
+      "alembic_version": {
+        "rows": 1,
+        "sha256": "98ed44074f8b1a7a3e296addba5a0c3af33fde4b28f9970cf9af56b78f4fca5e"
+      },
+      "customers": {
+        "rows": 200,
+        "sha256": "0ea32bb67a2c90140a797e3af16a82f9af175112e442047b1251845b4e750063"
+      },
+      "order_items": {
+        "rows": 2524,
+        "sha256": "96a5e68eb5e8d999de9f801e01569a1b3d88cadb216a1369e5560ee5b776daa7"
+      },
+      "orders": {
+        "rows": 1000,
+        "sha256": "868848c831047b8e1967832daa3506767ab5d2232d38c6f2420cec327095ce8a"
+      },
+      "products": {
+        "rows": 40,
+        "sha256": "c3e5bd910889330379e2246b3ee8e209814fb8f91568a096b0956ee290f751cd"
+      },
+      "staff_salaries": {
+        "rows": 10,
+        "sha256": "4efc6372e6fdb86350c16471e840db72698b246e8d1d01a56876c75ea64d8953"
+      },
+      "sequence:customers_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:order_items_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:orders_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:products_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      },
+      "sequence:staff_salaries_id_seq": {
+        "last_value": 1,
+        "is_called": false
+      }
+    }
+  },
+  "metrics": {
+    "layers": {
+      "validator_only": {
+        "total": 130,
+        "outcomes": {
+          "blocked_validator": 106,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 24
+        },
+        "rejected": 106,
+        "approved_passes": 16,
+        "harmful_passes": 0
+      },
+      "db_only": {
+        "total": 130,
+        "outcomes": {
+          "blocked_validator": 0,
+          "blocked_permission": 38,
+          "blocked_readonly": 15,
+          "timeout": 11,
+          "error": 31,
+          "passed": 35
+        },
+        "rejected": 53,
+        "approved_passes": 15,
+        "harmful_passes": 0
+      },
+      "full": {
+        "total": 130,
+        "outcomes": {
+          "blocked_validator": 106,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 7,
+          "error": 1,
+          "passed": 16
+        },
+        "rejected": 106,
+        "approved_passes": 16,
+        "harmful_passes": 0
+      }
+    },
+    "full_by_category": {
+      "comment_trick": {
+        "total": 8,
+        "outcomes": {
+          "blocked_validator": 2,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 6
+        },
+        "rejected": 2,
+        "approved_passes": 6,
+        "harmful_passes": 0
+      },
+      "dangerous_function": {
+        "total": 16,
+        "outcomes": {
+          "blocked_validator": 16,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 16,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "ddl": {
+        "total": 12,
+        "outcomes": {
+          "blocked_validator": 12,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 12,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "denied_column": {
+        "total": 15,
+        "outcomes": {
+          "blocked_validator": 14,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 1
+        },
+        "rejected": 14,
+        "approved_passes": 1,
+        "harmful_passes": 0
+      },
+      "denied_table": {
+        "total": 10,
+        "outcomes": {
+          "blocked_validator": 10,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 10,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "dos": {
+        "total": 11,
+        "outcomes": {
+          "blocked_validator": 4,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 7,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 4,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "encoding": {
+        "total": 8,
+        "outcomes": {
+          "blocked_validator": 3,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 1,
+          "passed": 4
+        },
+        "rejected": 3,
+        "approved_passes": 4,
+        "harmful_passes": 0
+      },
+      "limit_escape": {
+        "total": 12,
+        "outcomes": {
+          "blocked_validator": 7,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 5
+        },
+        "rejected": 7,
+        "approved_passes": 5,
+        "harmful_passes": 0
+      },
+      "stacked": {
+        "total": 8,
+        "outcomes": {
+          "blocked_validator": 8,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 8,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "system_catalog": {
+        "total": 10,
+        "outcomes": {
+          "blocked_validator": 10,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 10,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "whole_row": {
+        "total": 10,
+        "outcomes": {
+          "blocked_validator": 10,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 10,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      },
+      "write": {
+        "total": 10,
+        "outcomes": {
+          "blocked_validator": 10,
+          "blocked_permission": 0,
+          "blocked_readonly": 0,
+          "timeout": 0,
+          "error": 0,
+          "passed": 0
+        },
+        "rejected": 10,
+        "approved_passes": 0,
+        "harmful_passes": 0
+      }
+    },
+    "normal": {
+      "total": 40,
+      "ok": 40,
+      "false_block": 0,
+      "mismatch": 0,
+      "error": 0,
+      "false_block_rate": 0.0
+    }
+  },
+  "attacks": [
+    {
+      "id": "write_insert",
+      "category": "write",
+      "note": "Direct INSERT into an allowed table.",
+      "sql": "INSERT INTO orders (id, customer_id, status, ordered_at, total) VALUES (9999, 1, 'paid', CURRENT_TIMESTAMP, 1)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_update",
+      "category": "write",
+      "note": "Direct UPDATE of every order.",
+      "sql": "UPDATE orders SET status = 'done'",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_delete",
+      "category": "write",
+      "note": "Direct DELETE from an allowed table.",
+      "sql": "DELETE FROM orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_merge",
+      "category": "write",
+      "note": "MERGE with a destructive matched branch.",
+      "sql": "MERGE INTO orders o USING orders s ON o.id = s.id WHEN MATCHED THEN DELETE",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_select_into",
+      "category": "write",
+      "note": "SELECT INTO creates and populates a table.",
+      "sql": "SELECT * INTO copied_orders FROM orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_cte_delete",
+      "category": "write",
+      "note": "Data-modifying CTE hidden under SELECT.",
+      "sql": "WITH removed AS (DELETE FROM orders RETURNING id) SELECT * FROM removed",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE",
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE",
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_for_update",
+      "category": "write",
+      "note": "Row-locking SELECT with FOR UPDATE.",
+      "sql": "SELECT * FROM orders FOR UPDATE",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_for_share",
+      "category": "write",
+      "note": "Row-locking SELECT with FOR SHARE.",
+      "sql": "SELECT * FROM orders FOR SHARE",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_sequence_nextval",
+      "category": "write",
+      "note": "Sequence mutation through nextval.",
+      "sql": "SELECT nextval('orders_id_seq')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "write_sequence_setval",
+      "category": "write",
+      "note": "Sequence mutation through setval.",
+      "sql": "SELECT setval('orders_id_seq', 5000)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_create_table",
+      "category": "ddl",
+      "note": "CREATE TABLE AS SELECT.",
+      "sql": "CREATE TABLE copied AS SELECT * FROM orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE",
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE",
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_drop_table",
+      "category": "ddl",
+      "note": "DROP an application table.",
+      "sql": "DROP TABLE orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_alter_table",
+      "category": "ddl",
+      "note": "ALTER an application table.",
+      "sql": "ALTER TABLE orders ADD COLUMN secret text",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_truncate",
+      "category": "ddl",
+      "note": "TRUNCATE an application table.",
+      "sql": "TRUNCATE TABLE orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_grant",
+      "category": "ddl",
+      "note": "Broaden database privileges.",
+      "sql": "GRANT SELECT ON orders TO public",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_revoke",
+      "category": "ddl",
+      "note": "Change database privileges.",
+      "sql": "REVOKE SELECT ON orders FROM public",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_vacuum",
+      "category": "ddl",
+      "note": "Maintenance command outside the SELECT grammar.",
+      "sql": "VACUUM orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_copy_file",
+      "category": "ddl",
+      "note": "Server-side COPY to a file.",
+      "sql": "COPY orders TO '/tmp/orders'",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_set_path",
+      "category": "ddl",
+      "note": "Session configuration mutation.",
+      "sql": "SET search_path = public",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_begin",
+      "category": "ddl",
+      "note": "Transaction-control command.",
+      "sql": "BEGIN",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_commit",
+      "category": "ddl",
+      "note": "Transaction-control command.",
+      "sql": "COMMIT",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "ddl_rollback",
+      "category": "ddl",
+      "note": "Transaction-control command.",
+      "sql": "ROLLBACK",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "NOT_SELECT",
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_drop",
+      "category": "stacked",
+      "note": "Benign first statement followed by DROP.",
+      "sql": "SELECT 1; DROP TABLE orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_delete",
+      "category": "stacked",
+      "note": "SELECT followed by DELETE.",
+      "sql": "SELECT id FROM orders LIMIT 1; DELETE FROM orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_insert",
+      "category": "stacked",
+      "note": "SELECT followed by INSERT.",
+      "sql": "SELECT 1; INSERT INTO orders (id) VALUES (9999)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_set",
+      "category": "stacked",
+      "note": "SELECT followed by disabling the session timeout.",
+      "sql": "SELECT 1; SET statement_timeout = 0",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_leak",
+      "category": "stacked",
+      "note": "Allowed projection followed by a denied projection.",
+      "sql": "SELECT id FROM customers LIMIT 1; SELECT email FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_leading",
+      "category": "stacked",
+      "note": "Destructive first statement followed by SELECT.",
+      "sql": "DELETE FROM orders; SELECT 1",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_empty_middle",
+      "category": "stacked",
+      "note": "Empty statement inserted between SELECT and DROP.",
+      "sql": "SELECT 1;; DROP TABLE products",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "stacked_transaction",
+      "category": "stacked",
+      "note": "Explicit transaction containing a write.",
+      "sql": "BEGIN; DELETE FROM orders; COMMIT",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "MULTI_STATEMENT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_line_drop",
+      "category": "comment_trick",
+      "note": "Semicolon and DROP are only line-comment text.",
+      "sql": "SELECT id FROM orders -- ; DROP TABLE orders",
+      "allowed_to_pass": "The apparent second statement is inert comment text.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_block_salary",
+      "category": "comment_trick",
+      "note": "Denied-table text is inside a block comment.",
+      "sql": "SELECT id FROM orders /* UNION SELECT salary FROM staff_salaries */ ORDER BY id LIMIT 1",
+      "allowed_to_pass": "The denied-table text is inert comment text.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_block_drop",
+      "category": "comment_trick",
+      "note": "DDL words appear between SELECT and its projection.",
+      "sql": "SELECT /* DROP TABLE staff_salaries */ id FROM orders ORDER BY id LIMIT 1",
+      "allowed_to_pass": "The DDL words are inert comment text.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_hidden_email",
+      "category": "comment_trick",
+      "note": "A denied column name is commented out.",
+      "sql": "SELECT id /*, email */ FROM customers ORDER BY id LIMIT 1",
+      "allowed_to_pass": "The denied column is not part of the parsed query.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_nested_tokens",
+      "category": "comment_trick",
+      "note": "Line-comment and delete tokens appear inside a block comment.",
+      "sql": "SELECT id FROM products /* -- ; DELETE FROM products */ ORDER BY id LIMIT 1",
+      "allowed_to_pass": "All attack tokens are inert comment text.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_newline_write",
+      "category": "comment_trick",
+      "note": "A write is hidden on a commented line.",
+      "sql": "SELECT id FROM products\n-- DELETE FROM products\nORDER BY id LIMIT 1",
+      "allowed_to_pass": "The write is inert comment text.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_unterminated",
+      "category": "comment_trick",
+      "note": "Unterminated comment tests fail-closed parsing.",
+      "sql": "SELECT id FROM orders /* DROP TABLE orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "PARSE_ERROR"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "PARSE_ERROR"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "comment_close_open",
+      "category": "comment_trick",
+      "note": "Stray comment delimiters surround a stacked write.",
+      "sql": "SELECT id FROM orders */; DELETE FROM orders; /*",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "PARSE_ERROR"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "PARSE_ERROR"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_email",
+      "category": "denied_column",
+      "note": "Direct customer email projection.",
+      "sql": "SELECT email FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_alias_email",
+      "category": "denied_column",
+      "note": "Email projected through a table alias.",
+      "sql": "SELECT c.email FROM customers AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_phone",
+      "category": "denied_column",
+      "note": "Direct customer phone projection.",
+      "sql": "SELECT phone FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_quoted_email",
+      "category": "denied_column",
+      "note": "Case-folding bypass attempt with a quoted denied column.",
+      "sql": "SELECT \"EMAIL\" FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_subquery_email",
+      "category": "denied_column",
+      "note": "Denied column propagated through a derived table.",
+      "sql": "SELECT email FROM (SELECT email FROM customers) AS private_customer",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_subquery_star",
+      "category": "denied_column",
+      "note": "Denied column hidden behind derived-table star expansion.",
+      "sql": "SELECT * FROM (SELECT c.*, c.email FROM customers AS c) AS private_customer",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_cte_email",
+      "category": "denied_column",
+      "note": "Denied column propagated through a CTE.",
+      "sql": "WITH private AS (SELECT email FROM customers) SELECT email FROM private",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_lateral_email",
+      "category": "denied_column",
+      "note": "Correlated denied column projected through LATERAL.",
+      "sql": "SELECT x.email FROM customers AS c CROSS JOIN LATERAL (SELECT c.email) AS x",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_join_star",
+      "category": "denied_column",
+      "note": "Qualified stars on a join may expose omitted customer columns.",
+      "sql": "SELECT c.*, o.* FROM customers AS c JOIN orders AS o ON o.customer_id = c.id",
+      "allowed_to_pass": "The validator expands both stars to policy-allowed columns before execution.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_where_oracle",
+      "category": "denied_column",
+      "note": "Boolean oracle over a denied email.",
+      "sql": "SELECT id FROM customers WHERE email = 'customer001@example.test'",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_order_oracle",
+      "category": "denied_column",
+      "note": "Ordering oracle over a denied email.",
+      "sql": "SELECT id FROM customers ORDER BY email",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_group_oracle",
+      "category": "denied_column",
+      "note": "Grouping oracle over a denied phone number.",
+      "sql": "SELECT COUNT(*) FROM customers GROUP BY phone",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_case_oracle",
+      "category": "denied_column",
+      "note": "CASE expression observes a denied phone number.",
+      "sql": "SELECT CASE WHEN phone IS NULL THEN 0 ELSE 1 END FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_join_phone",
+      "category": "denied_column",
+      "note": "Denied phone used only in a join condition.",
+      "sql": "SELECT o.id FROM orders AS o JOIN customers AS c ON c.id = o.customer_id AND c.phone LIKE '+90%'",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "column_union_email",
+      "category": "denied_column",
+      "note": "Denied email in one set-operation branch.",
+      "sql": "SELECT name FROM customers UNION SELECT email FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary",
+      "category": "denied_table",
+      "note": "Direct denied-table projection.",
+      "sql": "SELECT * FROM staff_salaries",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_public",
+      "category": "denied_table",
+      "note": "Schema-qualified denied table.",
+      "sql": "SELECT * FROM public.staff_salaries",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_quoted",
+      "category": "denied_table",
+      "note": "Quoted case variant of a denied table.",
+      "sql": "SELECT * FROM \"STAFF_SALARIES\"",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_private_customers",
+      "category": "denied_table",
+      "note": "Allowed table name in a denied schema.",
+      "sql": "SELECT * FROM private.customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_catalog_qualified_orders",
+      "category": "denied_table",
+      "note": "Three-part table name with an explicit catalog.",
+      "sql": "SELECT * FROM app.public.orders",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_scalar",
+      "category": "denied_table",
+      "note": "Denied table inside a scalar predicate.",
+      "sql": "SELECT 1 WHERE 1 IN (SELECT id FROM staff_salaries)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_values",
+      "category": "denied_table",
+      "note": "Denied-table subquery nested in VALUES.",
+      "sql": "SELECT * FROM (VALUES ((SELECT id FROM staff_salaries))) AS v(id)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_cte_table",
+      "category": "denied_table",
+      "note": "TABLE command hidden inside a CTE.",
+      "sql": "WITH salaries AS (TABLE staff_salaries) SELECT * FROM salaries",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_in_table",
+      "category": "denied_table",
+      "note": "TABLE command used as a predicate source.",
+      "sql": "SELECT 1 WHERE 1 IN (TABLE staff_salaries)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "table_salary_lateral",
+      "category": "denied_table",
+      "note": "Denied table accessed through LATERAL.",
+      "sql": "SELECT s.salary FROM customers AS c CROSS JOIN LATERAL (SELECT salary FROM staff_salaries LIMIT 1) AS s",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_pg_user",
+      "category": "system_catalog",
+      "note": "PostgreSQL user catalog.",
+      "sql": "SELECT * FROM pg_catalog.pg_user",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_information_schema",
+      "category": "system_catalog",
+      "note": "Information-schema table inventory.",
+      "sql": "SELECT * FROM information_schema.tables",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_stat_activity",
+      "category": "system_catalog",
+      "note": "Session activity view.",
+      "sql": "SELECT * FROM pg_stat_activity",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_roles",
+      "category": "system_catalog",
+      "note": "Database role inventory.",
+      "sql": "SELECT rolname FROM pg_roles",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_settings",
+      "category": "system_catalog",
+      "note": "Server configuration inventory.",
+      "sql": "SELECT name, setting FROM pg_settings",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_class",
+      "category": "system_catalog",
+      "note": "Relation metadata catalog.",
+      "sql": "SELECT relname FROM pg_catalog.pg_class",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_namespace",
+      "category": "system_catalog",
+      "note": "Schema metadata catalog.",
+      "sql": "SELECT nspname FROM pg_namespace",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_shadow",
+      "category": "system_catalog",
+      "note": "Password metadata view.",
+      "sql": "SELECT usename, passwd FROM pg_shadow",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_prepared",
+      "category": "system_catalog",
+      "note": "Prepared-statement inventory.",
+      "sql": "SELECT * FROM pg_prepared_statements",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "catalog_case_quote",
+      "category": "system_catalog",
+      "note": "Quoted case trick against a system catalog.",
+      "sql": "SELECT * FROM pg_catalog.\"PG_ROLES\"",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_alias",
+      "category": "whole_row",
+      "note": "Direct whole-row alias projection.",
+      "sql": "SELECT c FROM customers AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_table_name",
+      "category": "whole_row",
+      "note": "Whole-row table-name projection.",
+      "sql": "SELECT customers FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_to_json",
+      "category": "whole_row",
+      "note": "Serialize the physical row including denied columns.",
+      "sql": "SELECT row_to_json(c) FROM customers AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_to_json_subquery",
+      "category": "whole_row",
+      "note": "Whole row passed through a derived table and serializer.",
+      "sql": "SELECT row_to_json(x) FROM (SELECT c FROM customers AS c) AS x",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_to_json_cte",
+      "category": "whole_row",
+      "note": "Whole row propagated through a CTE.",
+      "sql": "WITH x AS (SELECT c FROM customers AS c) SELECT row_to_json(x) FROM x",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_to_json_alias_shadow",
+      "category": "whole_row",
+      "note": "Alias shadows the underlying table name.",
+      "sql": "SELECT row_to_json(customers) FROM customers AS customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_order_alias_cast",
+      "category": "whole_row",
+      "note": "Projection alias shadows a row alias in ORDER BY.",
+      "sql": "SELECT id AS c FROM customers AS c ORDER BY c::text",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_order_table_cast",
+      "category": "whole_row",
+      "note": "Projection alias shadows a table name in ORDER BY.",
+      "sql": "SELECT id AS customers FROM customers ORDER BY customers::text",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_order_alias",
+      "category": "whole_row",
+      "note": "Bare ambiguous alias in ORDER BY.",
+      "sql": "SELECT id AS c FROM customers AS c ORDER BY c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "row_distinct_alias",
+      "category": "whole_row",
+      "note": "Alias shadowing inside DISTINCT ON.",
+      "sql": "SELECT DISTINCT ON (c) id AS c FROM customers AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_sleep",
+      "category": "dangerous_function",
+      "note": "Intentional statement delay.",
+      "sql": "SELECT pg_sleep(5)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_read_file",
+      "category": "dangerous_function",
+      "note": "Read a server-side file.",
+      "sql": "SELECT pg_read_file('/tmp/file')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_list_dir",
+      "category": "dangerous_function",
+      "note": "Enumerate a server-side directory.",
+      "sql": "SELECT pg_ls_dir('/tmp')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_set_config",
+      "category": "dangerous_function",
+      "note": "Mutate session configuration through a function.",
+      "sql": "SELECT set_config('search_path', 'public', false)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_current_setting",
+      "category": "dangerous_function",
+      "note": "Read server configuration.",
+      "sql": "SELECT current_setting('search_path')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_dblink",
+      "category": "dangerous_function",
+      "note": "Attempt an outbound database connection.",
+      "sql": "SELECT dblink('connection', 'SELECT 1')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_lo_import",
+      "category": "dangerous_function",
+      "note": "Import a server-side file as a large object.",
+      "sql": "SELECT lo_import('/tmp/file')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_lo_export",
+      "category": "dangerous_function",
+      "note": "Export a large object to a server-side file.",
+      "sql": "SELECT lo_export(1, '/tmp/file')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_lo_create",
+      "category": "dangerous_function",
+      "note": "Create a large object.",
+      "sql": "SELECT lo_create(123456)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_readonly",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_version",
+      "category": "dangerous_function",
+      "note": "Fingerprint the database server.",
+      "sql": "SELECT version()",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_query_to_xml",
+      "category": "dangerous_function",
+      "note": "Execute SQL supplied as a string.",
+      "sql": "SELECT query_to_xml('SELECT 1', false, false, '')",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_generate_series",
+      "category": "dangerous_function",
+      "note": "Set-returning function outside the allowlist.",
+      "sql": "SELECT generate_series(1, 2)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_advisory_lock",
+      "category": "dangerous_function",
+      "note": "Acquire a session advisory lock.",
+      "sql": "SELECT pg_advisory_lock(424242)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_advisory_xact_lock",
+      "category": "dangerous_function",
+      "note": "Acquire a transaction advisory lock.",
+      "sql": "SELECT pg_advisory_xact_lock(424243)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_terminate_self",
+      "category": "dangerous_function",
+      "note": "Terminate the executing backend.",
+      "sql": "SELECT pg_terminate_backend(pg_backend_pid())",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "function_cancel_self",
+      "category": "dangerous_function",
+      "note": "Cancel the executing backend.",
+      "sql": "SELECT pg_cancel_backend(pg_backend_pid())",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_negative",
+      "category": "limit_escape",
+      "note": "Negative LIMIT.",
+      "sql": "SELECT 1 LIMIT -1",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_parameter",
+      "category": "limit_escape",
+      "note": "Bind parameter instead of a literal LIMIT.",
+      "sql": "SELECT 1 LIMIT $1",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_decimal",
+      "category": "limit_escape",
+      "note": "Decimal LIMIT.",
+      "sql": "SELECT 1 LIMIT 1.5",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_all",
+      "category": "limit_escape",
+      "note": "Unlimited LIMIT keyword.",
+      "sql": "SELECT id FROM orders LIMIT ALL",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "offset_negative",
+      "category": "limit_escape",
+      "note": "Negative OFFSET.",
+      "sql": "SELECT 1 OFFSET -1",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "offset_parameter",
+      "category": "limit_escape",
+      "note": "Bind parameter instead of a literal OFFSET.",
+      "sql": "SELECT 1 OFFSET $1",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "fetch_parameter",
+      "category": "limit_escape",
+      "note": "Bind parameter in FETCH.",
+      "sql": "SELECT 1 FETCH FIRST $1 ROWS ONLY",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "BAD_LIMIT"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_huge",
+      "category": "limit_escape",
+      "note": "Huge literal LIMIT should be safely clamped.",
+      "sql": "SELECT id FROM orders ORDER BY id LIMIT 999999999",
+      "allowed_to_pass": "The validator rewrites the LIMIT to the configured maximum.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "fetch_huge",
+      "category": "limit_escape",
+      "note": "Huge FETCH count should be safely clamped.",
+      "sql": "SELECT id FROM orders ORDER BY id FETCH FIRST 999999999 ROWS ONLY",
+      "allowed_to_pass": "The validator rewrites FETCH to the configured maximum.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_leading_zero",
+      "category": "limit_escape",
+      "note": "Leading-zero integer literal.",
+      "sql": "SELECT id FROM orders ORDER BY id LIMIT 01",
+      "allowed_to_pass": "PostgreSQL and the validator treat 01 as the safe literal 1.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "limit_set_branches",
+      "category": "limit_escape",
+      "note": "Oversized LIMIT in both set-operation branches.",
+      "sql": "(SELECT id FROM customers ORDER BY id LIMIT 900) UNION (SELECT customer_id FROM orders ORDER BY customer_id LIMIT 800)",
+      "allowed_to_pass": "Every branch is clamped and the outer result receives the default cap.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "offset_huge",
+      "category": "limit_escape",
+      "note": "Very large literal OFFSET.",
+      "sql": "SELECT id FROM orders ORDER BY id OFFSET 999999999",
+      "allowed_to_pass": "A non-negative literal OFFSET is safe and returns no rows here.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_generate_series",
+      "category": "dos",
+      "note": "Billion-row generated relation.",
+      "sql": "SELECT COUNT(*) FROM generate_series(1, 1000000000)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "TABLE_NOT_ALLOWED",
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_repeat",
+      "category": "dos",
+      "note": "Attempt a huge in-memory string allocation.",
+      "sql": "SELECT repeat('x', 1000000000)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FUNCTION_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_recursive",
+      "category": "dos",
+      "note": "Unbounded recursive CTE.",
+      "sql": "WITH RECURSIVE bomb(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM bomb) SELECT COUNT(*) FROM bomb",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_orders_cube",
+      "category": "dos",
+      "note": "Billion-row Cartesian product.",
+      "sql": "SELECT COUNT(*) FROM orders AS a CROSS JOIN orders AS b CROSS JOIN orders AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_items_cube",
+      "category": "dos",
+      "note": "Multi-billion-row Cartesian product over order items.",
+      "sql": "SELECT COUNT(*) FROM order_items AS a CROSS JOIN order_items AS b CROSS JOIN order_items AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_mixed_cartesian",
+      "category": "dos",
+      "note": "Large Cartesian product across three allowed tables.",
+      "sql": "SELECT COUNT(*) FROM customers AS c CROSS JOIN orders AS o CROSS JOIN order_items AS oi",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_window_cartesian",
+      "category": "dos",
+      "note": "Full-partition window count over a hundred-million-row Cartesian product.",
+      "sql": "SELECT COUNT(*) OVER () FROM order_items AS a CROSS JOIN orders AS b CROSS JOIN products AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_correlated",
+      "category": "dos",
+      "note": "Aggregate a computed value across a billion-row Cartesian product.",
+      "sql": "SELECT SUM(a.total + b.total + c.total) FROM orders AS a CROSS JOIN orders AS b CROSS JOIN orders AS c",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_many_joins",
+      "category": "dos",
+      "note": "Five-way Cartesian join.",
+      "sql": "SELECT COUNT(*) FROM products AS a CROSS JOIN products AS b CROSS JOIN products AS c CROSS JOIN products AS d CROSS JOIN products AS e",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "timeout",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "timeout",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_tablesample",
+      "category": "dos",
+      "note": "TABLESAMPLE syntax is forbidden rather than accepted as a scan modifier.",
+      "sql": "SELECT * FROM customers TABLESAMPLE SYSTEM (10)",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "dos_using_sample",
+      "category": "dos",
+      "note": "Alternate sample syntax is forbidden.",
+      "sql": "SELECT * FROM customers USING SAMPLE 10",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "FORBIDDEN_NODE"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_escape_string",
+      "category": "encoding",
+      "note": "PostgreSQL escape string containing SQL-looking text.",
+      "sql": "SELECT E'hello; -- not SQL'",
+      "allowed_to_pass": "The attack text is a harmless string literal.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_dollar_string",
+      "category": "encoding",
+      "note": "Dollar-quoted string containing a stacked DROP.",
+      "sql": "SELECT $$hello; DROP TABLE orders$$",
+      "allowed_to_pass": "The DROP is data inside a harmless string literal.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_unicode_string",
+      "category": "encoding",
+      "note": "Unicode escape string containing SQL-looking text.",
+      "sql": "SELECT U&'d\\0061ta; DROP TABLE orders'",
+      "allowed_to_pass": "The DROP is data inside a harmless string literal.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_tagged_dollar",
+      "category": "encoding",
+      "note": "Tagged dollar quote containing leak and write text.",
+      "sql": "SELECT $attack$SELECT email FROM customers; DELETE FROM orders$attack$",
+      "allowed_to_pass": "The attack text is a harmless string literal.",
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "passed",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "passed",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_quoted_case_email",
+      "category": "encoding",
+      "note": "Mixed-case quoted denied identifier.",
+      "sql": "SELECT \"eMaIl\" FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_unicode_email",
+      "category": "encoding",
+      "note": "Unicode-escaped denied identifier.",
+      "sql": "SELECT U&\"em\\0061il\" FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "blocked_permission",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_fullwidth_email",
+      "category": "encoding",
+      "note": "Full-width lookalike identifier.",
+      "sql": "SELECT \"\uff45\uff4d\uff41\uff49\uff4c\" FROM customers",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "blocked_validator",
+          "violations": [
+            "COLUMN_NOT_ALLOWED"
+          ],
+          "leak": false,
+          "write": false
+        }
+      }
+    },
+    {
+      "id": "encoding_null_escape",
+      "category": "encoding",
+      "note": "Escape-string attempt containing a NUL code point.",
+      "sql": "SELECT E'abc\\000def'",
+      "allowed_to_pass": null,
+      "configurations": {
+        "validator_only": {
+          "outcome": "passed",
+          "violations": [],
+          "execution_outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "db_only": {
+          "outcome": "error",
+          "leak": false,
+          "write": false
+        },
+        "full": {
+          "outcome": "error",
+          "violations": [],
+          "leak": false,
+          "write": false
+        }
+      }
+    }
+  ],
+  "normal_questions": [
+    {
+      "id": "q001",
+      "question": "List every product with its category and price.",
+      "category": "simple",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 40
+    },
+    {
+      "id": "q002",
+      "question": "List the first 25 customers and their locations.",
+      "category": "simple",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 25
+    },
+    {
+      "id": "q003",
+      "question": "Show the first 50 orders with their status and total.",
+      "category": "simple",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q004",
+      "question": "Show the first 60 order items.",
+      "category": "simple",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 60
+    },
+    {
+      "id": "q005",
+      "question": "Which products cost between 50 and 150?",
+      "category": "filter",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 6
+    },
+    {
+      "id": "q006",
+      "question": "Which customers are in Germany or France?",
+      "category": "filter",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q007",
+      "question": "List the first 75 paid or shipped orders, ordered by status and then ID.",
+      "category": "filter",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 75
+    },
+    {
+      "id": "q008",
+      "question": "List the first 75 order items with quantity at least four, highest quantity first.",
+      "category": "filter",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 75
+    },
+    {
+      "id": "q009",
+      "question": "Show the customer name for the first 50 orders.",
+      "category": "join",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q010",
+      "question": "Show product names and quantities for the first 60 order items.",
+      "category": "join",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 60
+    },
+    {
+      "id": "q011",
+      "question": "Show customers and products for items in the first 20 orders.",
+      "category": "join",
+      "difficulty": "hard",
+      "outcome": "ok",
+      "row_count": 49
+    },
+    {
+      "id": "q012",
+      "question": "Show the first 40 delivered orders with their customer location.",
+      "category": "join",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 40
+    },
+    {
+      "id": "q013",
+      "question": "How many products are there?",
+      "category": "aggregate",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 1
+    },
+    {
+      "id": "q014",
+      "question": "What are the minimum, maximum, and average product prices?",
+      "category": "aggregate",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 1
+    },
+    {
+      "id": "q015",
+      "question": "What is the total value of delivered orders?",
+      "category": "aggregate",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 1
+    },
+    {
+      "id": "q016",
+      "question": "How many distinct customers placed an order?",
+      "category": "aggregate",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 1
+    },
+    {
+      "id": "q017",
+      "question": "Which statuses have more than 150 orders?",
+      "category": "group_having",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 5
+    },
+    {
+      "id": "q018",
+      "question": "Which product categories average more than 100 in price?",
+      "category": "group_having",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 6
+    },
+    {
+      "id": "q019",
+      "question": "Which customers have at least eight orders?",
+      "category": "group_having",
+      "difficulty": "hard",
+      "outcome": "ok",
+      "row_count": 21
+    },
+    {
+      "id": "q020",
+      "question": "Which products appear in more than 50 order items?",
+      "category": "group_having",
+      "difficulty": "hard",
+      "outcome": "ok",
+      "row_count": 38
+    },
+    {
+      "id": "q021",
+      "question": "How many orders were placed in each year?",
+      "category": "date",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 2
+    },
+    {
+      "id": "q022",
+      "question": "What was the order total per month in 2024?",
+      "category": "date",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 12
+    },
+    {
+      "id": "q023",
+      "question": "List the first 50 customers by creation date.",
+      "category": "date",
+      "difficulty": "easy",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q024",
+      "question": "Count orders by calendar day for the first ten active days.",
+      "category": "date",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 10
+    },
+    {
+      "id": "q025",
+      "question": "Rank products from most to least expensive.",
+      "category": "window",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 40
+    },
+    {
+      "id": "q026",
+      "question": "Rank products by price inside each category.",
+      "category": "window",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 40
+    },
+    {
+      "id": "q027",
+      "question": "Show the running order total for the first 50 orders.",
+      "category": "window",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q028",
+      "question": "Show each of the first 50 orders and the previous order total.",
+      "category": "window",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q029",
+      "question": "Use a named result to list expensive products.",
+      "category": "cte",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 23
+    },
+    {
+      "id": "q030",
+      "question": "Use a named result to count the first 100 orders by status.",
+      "category": "cte",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 5
+    },
+    {
+      "id": "q031",
+      "question": "Use named results to show the first 50 items with product names.",
+      "category": "cte",
+      "difficulty": "hard",
+      "outcome": "ok",
+      "row_count": 50
+    },
+    {
+      "id": "q032",
+      "question": "Use a named result to list the top 75 customer order totals above 5000.",
+      "category": "cte",
+      "difficulty": "hard",
+      "outcome": "ok",
+      "row_count": 75
+    },
+    {
+      "id": "q033",
+      "question": "Which products cost more than the average product price?",
+      "category": "subquery",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 20
+    },
+    {
+      "id": "q034",
+      "question": "List the first 75 customers by ID who have placed a delivered order.",
+      "category": "subquery",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 75
+    },
+    {
+      "id": "q035",
+      "question": "Which products appear in the first 20 orders?",
+      "category": "subquery",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 27
+    },
+    {
+      "id": "q036",
+      "question": "List the 75 highest-total orders above the average order total.",
+      "category": "subquery",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 75
+    },
+    {
+      "id": "q037",
+      "question": "Combine customer IDs 1 to 20 with product IDs 1 to 20.",
+      "category": "set_op",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 20
+    },
+    {
+      "id": "q038",
+      "question": "Find IDs shared by the first 30 customers and first 20 products.",
+      "category": "set_op",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 20
+    },
+    {
+      "id": "q039",
+      "question": "Find customer IDs 1 to 30 that are not product IDs 1 to 20.",
+      "category": "set_op",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 10
+    },
+    {
+      "id": "q040",
+      "question": "Combine the first ten customer and product names with source labels.",
+      "category": "set_op",
+      "difficulty": "medium",
+      "outcome": "ok",
+      "row_count": 20
+    }
+  ]
+}

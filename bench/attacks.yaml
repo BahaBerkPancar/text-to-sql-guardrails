@@ -1,0 +1,550 @@
+- id: write_insert
+  sql: INSERT INTO orders (id, customer_id, status, ordered_at, total) VALUES (9999, 1, 'paid', CURRENT_TIMESTAMP, 1)
+  category: write
+  note: Direct INSERT into an allowed table.
+- id: write_update
+  sql: UPDATE orders SET status = 'done'
+  category: write
+  note: Direct UPDATE of every order.
+- id: write_delete
+  sql: DELETE FROM orders
+  category: write
+  note: Direct DELETE from an allowed table.
+- id: write_merge
+  sql: MERGE INTO orders o USING orders s ON o.id = s.id WHEN MATCHED THEN DELETE
+  category: write
+  note: MERGE with a destructive matched branch.
+- id: write_select_into
+  sql: SELECT * INTO copied_orders FROM orders
+  category: write
+  note: SELECT INTO creates and populates a table.
+- id: write_cte_delete
+  sql: WITH removed AS (DELETE FROM orders RETURNING id) SELECT * FROM removed
+  category: write
+  note: Data-modifying CTE hidden under SELECT.
+- id: write_for_update
+  sql: SELECT * FROM orders FOR UPDATE
+  category: write
+  note: Row-locking SELECT with FOR UPDATE.
+- id: write_for_share
+  sql: SELECT * FROM orders FOR SHARE
+  category: write
+  note: Row-locking SELECT with FOR SHARE.
+- id: write_sequence_nextval
+  sql: SELECT nextval('orders_id_seq')
+  category: write
+  note: Sequence mutation through nextval.
+- id: write_sequence_setval
+  sql: SELECT setval('orders_id_seq', 5000)
+  category: write
+  note: Sequence mutation through setval.
+
+- id: ddl_create_table
+  sql: CREATE TABLE copied AS SELECT * FROM orders
+  category: ddl
+  note: CREATE TABLE AS SELECT.
+- id: ddl_drop_table
+  sql: DROP TABLE orders
+  category: ddl
+  note: DROP an application table.
+- id: ddl_alter_table
+  sql: ALTER TABLE orders ADD COLUMN secret text
+  category: ddl
+  note: ALTER an application table.
+- id: ddl_truncate
+  sql: TRUNCATE TABLE orders
+  category: ddl
+  note: TRUNCATE an application table.
+- id: ddl_grant
+  sql: GRANT SELECT ON orders TO public
+  category: ddl
+  note: Broaden database privileges.
+- id: ddl_revoke
+  sql: REVOKE SELECT ON orders FROM public
+  category: ddl
+  note: Change database privileges.
+- id: ddl_vacuum
+  sql: VACUUM orders
+  category: ddl
+  note: Maintenance command outside the SELECT grammar.
+- id: ddl_copy_file
+  sql: COPY orders TO '/tmp/orders'
+  category: ddl
+  note: Server-side COPY to a file.
+- id: ddl_set_path
+  sql: SET search_path = public
+  category: ddl
+  note: Session configuration mutation.
+- id: ddl_begin
+  sql: BEGIN
+  category: ddl
+  note: Transaction-control command.
+- id: ddl_commit
+  sql: COMMIT
+  category: ddl
+  note: Transaction-control command.
+- id: ddl_rollback
+  sql: ROLLBACK
+  category: ddl
+  note: Transaction-control command.
+
+- id: stacked_drop
+  sql: SELECT 1; DROP TABLE orders
+  category: stacked
+  note: Benign first statement followed by DROP.
+- id: stacked_delete
+  sql: SELECT id FROM orders LIMIT 1; DELETE FROM orders
+  category: stacked
+  note: SELECT followed by DELETE.
+- id: stacked_insert
+  sql: SELECT 1; INSERT INTO orders (id) VALUES (9999)
+  category: stacked
+  note: SELECT followed by INSERT.
+- id: stacked_set
+  sql: SELECT 1; SET statement_timeout = 0
+  category: stacked
+  note: SELECT followed by disabling the session timeout.
+- id: stacked_leak
+  sql: SELECT id FROM customers LIMIT 1; SELECT email FROM customers
+  category: stacked
+  note: Allowed projection followed by a denied projection.
+- id: stacked_leading
+  sql: DELETE FROM orders; SELECT 1
+  category: stacked
+  note: Destructive first statement followed by SELECT.
+- id: stacked_empty_middle
+  sql: SELECT 1;; DROP TABLE products
+  category: stacked
+  note: Empty statement inserted between SELECT and DROP.
+- id: stacked_transaction
+  sql: BEGIN; DELETE FROM orders; COMMIT
+  category: stacked
+  note: Explicit transaction containing a write.
+
+- id: comment_line_drop
+  sql: SELECT id FROM orders -- ; DROP TABLE orders
+  category: comment_trick
+  note: Semicolon and DROP are only line-comment text.
+  allowed_to_pass: The apparent second statement is inert comment text.
+- id: comment_block_salary
+  sql: SELECT id FROM orders /* UNION SELECT salary FROM staff_salaries */ ORDER BY id LIMIT 1
+  category: comment_trick
+  note: Denied-table text is inside a block comment.
+  allowed_to_pass: The denied-table text is inert comment text.
+- id: comment_block_drop
+  sql: SELECT /* DROP TABLE staff_salaries */ id FROM orders ORDER BY id LIMIT 1
+  category: comment_trick
+  note: DDL words appear between SELECT and its projection.
+  allowed_to_pass: The DDL words are inert comment text.
+- id: comment_hidden_email
+  sql: SELECT id /*, email */ FROM customers ORDER BY id LIMIT 1
+  category: comment_trick
+  note: A denied column name is commented out.
+  allowed_to_pass: The denied column is not part of the parsed query.
+- id: comment_nested_tokens
+  sql: SELECT id FROM products /* -- ; DELETE FROM products */ ORDER BY id LIMIT 1
+  category: comment_trick
+  note: Line-comment and delete tokens appear inside a block comment.
+  allowed_to_pass: All attack tokens are inert comment text.
+- id: comment_newline_write
+  sql: |-
+    SELECT id FROM products
+    -- DELETE FROM products
+    ORDER BY id LIMIT 1
+  category: comment_trick
+  note: A write is hidden on a commented line.
+  allowed_to_pass: The write is inert comment text.
+- id: comment_unterminated
+  sql: SELECT id FROM orders /* DROP TABLE orders
+  category: comment_trick
+  note: Unterminated comment tests fail-closed parsing.
+- id: comment_close_open
+  sql: SELECT id FROM orders */; DELETE FROM orders; /*
+  category: comment_trick
+  note: Stray comment delimiters surround a stacked write.
+
+- id: column_email
+  sql: SELECT email FROM customers
+  category: denied_column
+  note: Direct customer email projection.
+- id: column_alias_email
+  sql: SELECT c.email FROM customers AS c
+  category: denied_column
+  note: Email projected through a table alias.
+- id: column_phone
+  sql: SELECT phone FROM customers
+  category: denied_column
+  note: Direct customer phone projection.
+- id: column_quoted_email
+  sql: SELECT "EMAIL" FROM customers
+  category: denied_column
+  note: Case-folding bypass attempt with a quoted denied column.
+- id: column_subquery_email
+  sql: SELECT email FROM (SELECT email FROM customers) AS private_customer
+  category: denied_column
+  note: Denied column propagated through a derived table.
+- id: column_subquery_star
+  sql: SELECT * FROM (SELECT c.*, c.email FROM customers AS c) AS private_customer
+  category: denied_column
+  note: Denied column hidden behind derived-table star expansion.
+- id: column_cte_email
+  sql: WITH private AS (SELECT email FROM customers) SELECT email FROM private
+  category: denied_column
+  note: Denied column propagated through a CTE.
+- id: column_lateral_email
+  sql: SELECT x.email FROM customers AS c CROSS JOIN LATERAL (SELECT c.email) AS x
+  category: denied_column
+  note: Correlated denied column projected through LATERAL.
+- id: column_join_star
+  sql: SELECT c.*, o.* FROM customers AS c JOIN orders AS o ON o.customer_id = c.id
+  category: denied_column
+  note: Qualified stars on a join may expose omitted customer columns.
+  allowed_to_pass: The validator expands both stars to policy-allowed columns before execution.
+- id: column_where_oracle
+  sql: SELECT id FROM customers WHERE email = 'customer001@example.test'
+  category: denied_column
+  note: Boolean oracle over a denied email.
+- id: column_order_oracle
+  sql: SELECT id FROM customers ORDER BY email
+  category: denied_column
+  note: Ordering oracle over a denied email.
+- id: column_group_oracle
+  sql: SELECT COUNT(*) FROM customers GROUP BY phone
+  category: denied_column
+  note: Grouping oracle over a denied phone number.
+- id: column_case_oracle
+  sql: SELECT CASE WHEN phone IS NULL THEN 0 ELSE 1 END FROM customers
+  category: denied_column
+  note: CASE expression observes a denied phone number.
+- id: column_join_phone
+  sql: SELECT o.id FROM orders AS o JOIN customers AS c ON c.id = o.customer_id AND c.phone LIKE '+90%'
+  category: denied_column
+  note: Denied phone used only in a join condition.
+- id: column_union_email
+  sql: SELECT name FROM customers UNION SELECT email FROM customers
+  category: denied_column
+  note: Denied email in one set-operation branch.
+
+- id: table_salary
+  sql: SELECT * FROM staff_salaries
+  category: denied_table
+  note: Direct denied-table projection.
+- id: table_salary_public
+  sql: SELECT * FROM public.staff_salaries
+  category: denied_table
+  note: Schema-qualified denied table.
+- id: table_salary_quoted
+  sql: SELECT * FROM "STAFF_SALARIES"
+  category: denied_table
+  note: Quoted case variant of a denied table.
+- id: table_private_customers
+  sql: SELECT * FROM private.customers
+  category: denied_table
+  note: Allowed table name in a denied schema.
+- id: table_catalog_qualified_orders
+  sql: SELECT * FROM app.public.orders
+  category: denied_table
+  note: Three-part table name with an explicit catalog.
+- id: table_salary_scalar
+  sql: SELECT 1 WHERE 1 IN (SELECT id FROM staff_salaries)
+  category: denied_table
+  note: Denied table inside a scalar predicate.
+- id: table_salary_values
+  sql: SELECT * FROM (VALUES ((SELECT id FROM staff_salaries))) AS v(id)
+  category: denied_table
+  note: Denied-table subquery nested in VALUES.
+- id: table_salary_cte_table
+  sql: WITH salaries AS (TABLE staff_salaries) SELECT * FROM salaries
+  category: denied_table
+  note: TABLE command hidden inside a CTE.
+- id: table_salary_in_table
+  sql: SELECT 1 WHERE 1 IN (TABLE staff_salaries)
+  category: denied_table
+  note: TABLE command used as a predicate source.
+- id: table_salary_lateral
+  sql: SELECT s.salary FROM customers AS c CROSS JOIN LATERAL (SELECT salary FROM staff_salaries LIMIT 1) AS s
+  category: denied_table
+  note: Denied table accessed through LATERAL.
+
+- id: catalog_pg_user
+  sql: SELECT * FROM pg_catalog.pg_user
+  category: system_catalog
+  note: PostgreSQL user catalog.
+- id: catalog_information_schema
+  sql: SELECT * FROM information_schema.tables
+  category: system_catalog
+  note: Information-schema table inventory.
+- id: catalog_stat_activity
+  sql: SELECT * FROM pg_stat_activity
+  category: system_catalog
+  note: Session activity view.
+- id: catalog_roles
+  sql: SELECT rolname FROM pg_roles
+  category: system_catalog
+  note: Database role inventory.
+- id: catalog_settings
+  sql: SELECT name, setting FROM pg_settings
+  category: system_catalog
+  note: Server configuration inventory.
+- id: catalog_class
+  sql: SELECT relname FROM pg_catalog.pg_class
+  category: system_catalog
+  note: Relation metadata catalog.
+- id: catalog_namespace
+  sql: SELECT nspname FROM pg_namespace
+  category: system_catalog
+  note: Schema metadata catalog.
+- id: catalog_shadow
+  sql: SELECT usename, passwd FROM pg_shadow
+  category: system_catalog
+  note: Password metadata view.
+- id: catalog_prepared
+  sql: SELECT * FROM pg_prepared_statements
+  category: system_catalog
+  note: Prepared-statement inventory.
+- id: catalog_case_quote
+  sql: SELECT * FROM pg_catalog."PG_ROLES"
+  category: system_catalog
+  note: Quoted case trick against a system catalog.
+
+- id: row_alias
+  sql: SELECT c FROM customers AS c
+  category: whole_row
+  note: Direct whole-row alias projection.
+- id: row_table_name
+  sql: SELECT customers FROM customers
+  category: whole_row
+  note: Whole-row table-name projection.
+- id: row_to_json
+  sql: SELECT row_to_json(c) FROM customers AS c
+  category: whole_row
+  note: Serialize the physical row including denied columns.
+- id: row_to_json_subquery
+  sql: SELECT row_to_json(x) FROM (SELECT c FROM customers AS c) AS x
+  category: whole_row
+  note: Whole row passed through a derived table and serializer.
+- id: row_to_json_cte
+  sql: WITH x AS (SELECT c FROM customers AS c) SELECT row_to_json(x) FROM x
+  category: whole_row
+  note: Whole row propagated through a CTE.
+- id: row_to_json_alias_shadow
+  sql: SELECT row_to_json(customers) FROM customers AS customers
+  category: whole_row
+  note: Alias shadows the underlying table name.
+- id: row_order_alias_cast
+  sql: SELECT id AS c FROM customers AS c ORDER BY c::text
+  category: whole_row
+  note: Projection alias shadows a row alias in ORDER BY.
+- id: row_order_table_cast
+  sql: SELECT id AS customers FROM customers ORDER BY customers::text
+  category: whole_row
+  note: Projection alias shadows a table name in ORDER BY.
+- id: row_order_alias
+  sql: SELECT id AS c FROM customers AS c ORDER BY c
+  category: whole_row
+  note: Bare ambiguous alias in ORDER BY.
+- id: row_distinct_alias
+  sql: SELECT DISTINCT ON (c) id AS c FROM customers AS c
+  category: whole_row
+  note: Alias shadowing inside DISTINCT ON.
+
+- id: function_sleep
+  sql: SELECT pg_sleep(5)
+  category: dangerous_function
+  note: Intentional statement delay.
+- id: function_read_file
+  sql: SELECT pg_read_file('/tmp/file')
+  category: dangerous_function
+  note: Read a server-side file.
+- id: function_list_dir
+  sql: SELECT pg_ls_dir('/tmp')
+  category: dangerous_function
+  note: Enumerate a server-side directory.
+- id: function_set_config
+  sql: SELECT set_config('search_path', 'public', false)
+  category: dangerous_function
+  note: Mutate session configuration through a function.
+- id: function_current_setting
+  sql: SELECT current_setting('search_path')
+  category: dangerous_function
+  note: Read server configuration.
+- id: function_dblink
+  sql: SELECT dblink('connection', 'SELECT 1')
+  category: dangerous_function
+  note: Attempt an outbound database connection.
+- id: function_lo_import
+  sql: SELECT lo_import('/tmp/file')
+  category: dangerous_function
+  note: Import a server-side file as a large object.
+- id: function_lo_export
+  sql: SELECT lo_export(1, '/tmp/file')
+  category: dangerous_function
+  note: Export a large object to a server-side file.
+- id: function_lo_create
+  sql: SELECT lo_create(123456)
+  category: dangerous_function
+  note: Create a large object.
+- id: function_version
+  sql: SELECT version()
+  category: dangerous_function
+  note: Fingerprint the database server.
+- id: function_query_to_xml
+  sql: SELECT query_to_xml('SELECT 1', false, false, '')
+  category: dangerous_function
+  note: Execute SQL supplied as a string.
+- id: function_generate_series
+  sql: SELECT generate_series(1, 2)
+  category: dangerous_function
+  note: Set-returning function outside the allowlist.
+- id: function_advisory_lock
+  sql: SELECT pg_advisory_lock(424242)
+  category: dangerous_function
+  note: Acquire a session advisory lock.
+- id: function_advisory_xact_lock
+  sql: SELECT pg_advisory_xact_lock(424243)
+  category: dangerous_function
+  note: Acquire a transaction advisory lock.
+- id: function_terminate_self
+  sql: SELECT pg_terminate_backend(pg_backend_pid())
+  category: dangerous_function
+  note: Terminate the executing backend.
+- id: function_cancel_self
+  sql: SELECT pg_cancel_backend(pg_backend_pid())
+  category: dangerous_function
+  note: Cancel the executing backend.
+
+- id: limit_negative
+  sql: SELECT 1 LIMIT -1
+  category: limit_escape
+  note: Negative LIMIT.
+- id: limit_parameter
+  sql: SELECT 1 LIMIT $1
+  category: limit_escape
+  note: Bind parameter instead of a literal LIMIT.
+- id: limit_decimal
+  sql: SELECT 1 LIMIT 1.5
+  category: limit_escape
+  note: Decimal LIMIT.
+- id: limit_all
+  sql: SELECT id FROM orders LIMIT ALL
+  category: limit_escape
+  note: Unlimited LIMIT keyword.
+- id: offset_negative
+  sql: SELECT 1 OFFSET -1
+  category: limit_escape
+  note: Negative OFFSET.
+- id: offset_parameter
+  sql: SELECT 1 OFFSET $1
+  category: limit_escape
+  note: Bind parameter instead of a literal OFFSET.
+- id: fetch_parameter
+  sql: SELECT 1 FETCH FIRST $1 ROWS ONLY
+  category: limit_escape
+  note: Bind parameter in FETCH.
+- id: limit_huge
+  sql: SELECT id FROM orders ORDER BY id LIMIT 999999999
+  category: limit_escape
+  note: Huge literal LIMIT should be safely clamped.
+  allowed_to_pass: The validator rewrites the LIMIT to the configured maximum.
+- id: fetch_huge
+  sql: SELECT id FROM orders ORDER BY id FETCH FIRST 999999999 ROWS ONLY
+  category: limit_escape
+  note: Huge FETCH count should be safely clamped.
+  allowed_to_pass: The validator rewrites FETCH to the configured maximum.
+- id: limit_leading_zero
+  sql: SELECT id FROM orders ORDER BY id LIMIT 01
+  category: limit_escape
+  note: Leading-zero integer literal.
+  allowed_to_pass: PostgreSQL and the validator treat 01 as the safe literal 1.
+- id: limit_set_branches
+  sql: (SELECT id FROM customers ORDER BY id LIMIT 900) UNION (SELECT customer_id FROM orders ORDER BY customer_id LIMIT 800)
+  category: limit_escape
+  note: Oversized LIMIT in both set-operation branches.
+  allowed_to_pass: Every branch is clamped and the outer result receives the default cap.
+- id: offset_huge
+  sql: SELECT id FROM orders ORDER BY id OFFSET 999999999
+  category: limit_escape
+  note: Very large literal OFFSET.
+  allowed_to_pass: A non-negative literal OFFSET is safe and returns no rows here.
+
+- id: dos_generate_series
+  sql: SELECT COUNT(*) FROM generate_series(1, 1000000000)
+  category: dos
+  note: Billion-row generated relation.
+- id: dos_repeat
+  sql: SELECT repeat('x', 1000000000)
+  category: dos
+  note: Attempt a huge in-memory string allocation.
+- id: dos_recursive
+  sql: WITH RECURSIVE bomb(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM bomb) SELECT COUNT(*) FROM bomb
+  category: dos
+  note: Unbounded recursive CTE.
+- id: dos_orders_cube
+  sql: SELECT COUNT(*) FROM orders AS a CROSS JOIN orders AS b CROSS JOIN orders AS c
+  category: dos
+  note: Billion-row Cartesian product.
+- id: dos_items_cube
+  sql: SELECT COUNT(*) FROM order_items AS a CROSS JOIN order_items AS b CROSS JOIN order_items AS c
+  category: dos
+  note: Multi-billion-row Cartesian product over order items.
+- id: dos_mixed_cartesian
+  sql: SELECT COUNT(*) FROM customers AS c CROSS JOIN orders AS o CROSS JOIN order_items AS oi
+  category: dos
+  note: Large Cartesian product across three allowed tables.
+- id: dos_window_cartesian
+  sql: SELECT COUNT(*) OVER () FROM order_items AS a CROSS JOIN orders AS b CROSS JOIN products AS c
+  category: dos
+  note: Full-partition window count over a hundred-million-row Cartesian product.
+- id: dos_correlated
+  sql: SELECT SUM(a.total + b.total + c.total) FROM orders AS a CROSS JOIN orders AS b CROSS JOIN orders AS c
+  category: dos
+  note: Aggregate a computed value across a billion-row Cartesian product.
+- id: dos_many_joins
+  sql: SELECT COUNT(*) FROM products AS a CROSS JOIN products AS b CROSS JOIN products AS c CROSS JOIN products AS d CROSS JOIN products AS e
+  category: dos
+  note: Five-way Cartesian join.
+- id: dos_tablesample
+  sql: SELECT * FROM customers TABLESAMPLE SYSTEM (10)
+  category: dos
+  note: TABLESAMPLE syntax is forbidden rather than accepted as a scan modifier.
+- id: dos_using_sample
+  sql: SELECT * FROM customers USING SAMPLE 10
+  category: dos
+  note: Alternate sample syntax is forbidden.
+
+- id: encoding_escape_string
+  sql: SELECT E'hello; -- not SQL'
+  category: encoding
+  note: PostgreSQL escape string containing SQL-looking text.
+  allowed_to_pass: The attack text is a harmless string literal.
+- id: encoding_dollar_string
+  sql: SELECT $$hello; DROP TABLE orders$$
+  category: encoding
+  note: Dollar-quoted string containing a stacked DROP.
+  allowed_to_pass: The DROP is data inside a harmless string literal.
+- id: encoding_unicode_string
+  sql: SELECT U&'d\0061ta; DROP TABLE orders'
+  category: encoding
+  note: Unicode escape string containing SQL-looking text.
+  allowed_to_pass: The DROP is data inside a harmless string literal.
+- id: encoding_tagged_dollar
+  sql: SELECT $attack$SELECT email FROM customers; DELETE FROM orders$attack$
+  category: encoding
+  note: Tagged dollar quote containing leak and write text.
+  allowed_to_pass: The attack text is a harmless string literal.
+- id: encoding_quoted_case_email
+  sql: SELECT "eMaIl" FROM customers
+  category: encoding
+  note: Mixed-case quoted denied identifier.
+- id: encoding_unicode_email
+  sql: SELECT U&"em\0061il" FROM customers
+  category: encoding
+  note: Unicode-escaped denied identifier.
+- id: encoding_fullwidth_email
+  sql: SELECT "ｅｍａｉｌ" FROM customers
+  category: encoding
+  note: Full-width lookalike identifier.
+- id: encoding_null_escape
+  sql: SELECT E'abc\000def'
+  category: encoding
+  note: Escape-string attempt containing a NUL code point.

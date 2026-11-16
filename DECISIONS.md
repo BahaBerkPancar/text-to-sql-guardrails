@@ -2,6 +2,31 @@
 
 Newest first. One entry per decision: date, what was decided, why, and what was rejected.
 
+## 2026-11-17 – Make the database executor a one-statement, stateless boundary
+Generated SQL runs through psycopg's prepared extended-query protocol even when it has no bind
+parameters. The simple protocol was rejected because it accepts multiple semicolon-separated
+commands in one execute, allowing a raw query to change session settings after a harmless SELECT.
+
+Every connection in a read-only engine runs `DISCARD ALL` when checked back into its pool. Rollback
+alone was rejected because session advisory locks and session settings survive transaction end and
+can affect a later request that reuses the connection.
+
+## 2026-11-16 – Benchmark the validator, database boundary, and full stack separately
+The offline corpus runs in three configurations: validator only, raw SQL through the restricted
+database executor, and the validator's rewritten SQL through that executor. A single aggregate
+score was rejected because it would hide which independent layer catches an attack and which layer
+needs regression coverage.
+
+Leak checks compare successful result cells with the database's real customer emails, phone
+numbers, salaries, and staff names. Checking only column names or SQL text was rejected because
+aliases, expressions, whole-row values, and serialization can remove the original label while the
+sensitive value still escapes. A before/after content hash separately detects writes.
+
+An attack may pass the full stack only with a version-controlled `allowed_to_pass` reason for a
+demonstrably harmless case, such as SQL-looking text inside a literal or a limit safely clamped by
+the validator. Allowlisting harmful behavior or adding an exception merely to improve the score is
+not permitted; new unexplained passes fail the benchmark gate.
+
 ## 2026-11-16 – Generate structured SQL with Claude behind the guardrails
 Claude Opus 5.5 at medium effort is the initial default because correctness is the priority for the
 first end-to-end version. Both model and effort remain configurable, and M4's benchmark will compare

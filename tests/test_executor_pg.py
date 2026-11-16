@@ -6,7 +6,9 @@ import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import DBAPIError
 
+from text_to_sql_guardrails.db import create_readonly_engine
 from text_to_sql_guardrails.guard.executor import (
+    QueryFailed,
     QueryPermissionDenied,
     QueryTimeout,
     run_readonly,
@@ -84,6 +86,46 @@ def test_executor_preserves_colons_and_percent_signs_in_literals(pg_engines):
     )
     assert literal.rows[0][:2] == ["a%", "t:1"]
     assert literal.rows[0][2] == 9
+
+
+def test_executor_rejects_stacked_statements_without_validator(pg_engines):
+    _, readonly_engine = pg_engines
+
+    with pytest.raises(QueryFailed):
+        run_readonly(
+            "SELECT 1; SELECT 2",
+            readonly_engine,
+            timeout_ms=3_000,
+            max_rows=10,
+        )
+
+
+def test_readonly_pool_discards_session_advisory_locks(pg_engines):
+    _, fixture_readonly_engine = pg_engines
+    engine = create_readonly_engine(
+        fixture_readonly_engine.url,
+        pool_size=1,
+        max_overflow=0,
+    )
+    try:
+        run_readonly(
+            "SELECT pg_advisory_lock(7)",
+            engine,
+            timeout_ms=3_000,
+            max_rows=10,
+        )
+
+        result = run_readonly(
+            "SELECT count(*) FROM pg_locks "
+            "WHERE locktype = 'advisory' AND pid = pg_backend_pid()",
+            engine,
+            timeout_ms=3_000,
+            max_rows=10,
+        )
+
+        assert result.rows == [[0]]
+    finally:
+        engine.dispose()
 
 
 def test_layer_3_timeout_without_validator(pg_engines):
