@@ -1,0 +1,200 @@
+- id: q001
+  question: List every product with its category and price.
+  gold_sql: SELECT id, name, category, price FROM products ORDER BY id
+  category: simple
+  difficulty: easy
+- id: q002
+  question: List the first 25 customers and their locations.
+  gold_sql: SELECT id, name, city, country FROM customers WHERE id <= 25 ORDER BY id
+  category: simple
+  difficulty: easy
+- id: q003
+  question: Show the first 50 orders with their status and total.
+  gold_sql: SELECT id, status, total FROM orders WHERE id <= 50 ORDER BY id
+  category: simple
+  difficulty: easy
+- id: q004
+  question: Show the first 60 order items.
+  gold_sql: SELECT id, order_id, product_id, quantity, unit_price FROM order_items WHERE id <= 60 ORDER BY id
+  category: simple
+  difficulty: easy
+- id: q005
+  question: Which products cost between 50 and 150?
+  gold_sql: SELECT id, name, price FROM products WHERE price BETWEEN 50 AND 150 ORDER BY price, id
+  category: filter
+  difficulty: easy
+- id: q006
+  question: Which customers are in Germany or France?
+  gold_sql: SELECT id, name, city, country FROM customers WHERE country IN ('Germany', 'France') ORDER BY country, city, id
+  category: filter
+  difficulty: easy
+- id: q007
+  question: List the first 75 paid or shipped orders, ordered by status and then ID.
+  gold_sql: SELECT id, status, total FROM orders WHERE status IN ('paid', 'shipped') ORDER BY status, id LIMIT 75
+  category: filter
+  difficulty: easy
+- id: q008
+  question: List the first 75 order items with quantity at least four, highest quantity first.
+  gold_sql: SELECT id, order_id, product_id, quantity FROM order_items WHERE quantity >= 4 ORDER BY quantity DESC, id LIMIT 75
+  category: filter
+  difficulty: easy
+- id: q009
+  question: Show the customer name for the first 50 orders.
+  gold_sql: SELECT o.id, c.name, o.status, o.total FROM orders AS o JOIN customers AS c ON c.id = o.customer_id WHERE o.id <= 50 ORDER BY o.id
+  category: join
+  difficulty: medium
+- id: q010
+  question: Show product names and quantities for the first 60 order items.
+  gold_sql: SELECT oi.id, p.name, oi.quantity, oi.unit_price FROM order_items AS oi JOIN products AS p ON p.id = oi.product_id WHERE oi.id <= 60 ORDER BY oi.id
+  category: join
+  difficulty: medium
+- id: q011
+  question: Show customers and products for items in the first 20 orders.
+  gold_sql: SELECT oi.id, c.name AS customer_name, p.name AS product_name, oi.quantity FROM order_items AS oi JOIN orders AS o ON o.id = oi.order_id JOIN customers AS c ON c.id = o.customer_id JOIN products AS p ON p.id = oi.product_id WHERE o.id <= 20 ORDER BY o.id, oi.id
+  category: join
+  difficulty: hard
+- id: q012
+  question: Show the first 40 delivered orders with their customer location.
+  gold_sql: SELECT o.id, c.city, c.country, o.total FROM orders AS o JOIN customers AS c ON c.id = o.customer_id WHERE o.status = 'delivered' ORDER BY o.id LIMIT 40
+  category: join
+  difficulty: medium
+- id: q013
+  question: How many products are there?
+  gold_sql: SELECT COUNT(*) AS product_count FROM products ORDER BY product_count
+  category: aggregate
+  difficulty: easy
+- id: q014
+  question: What are the minimum, maximum, and average product prices?
+  gold_sql: SELECT MIN(price) AS minimum_price, MAX(price) AS maximum_price, AVG(price) AS average_price FROM products ORDER BY minimum_price
+  category: aggregate
+  difficulty: easy
+- id: q015
+  question: What is the total value of delivered orders?
+  gold_sql: SELECT SUM(total) AS delivered_total FROM orders WHERE status = 'delivered' ORDER BY delivered_total
+  category: aggregate
+  difficulty: easy
+- id: q016
+  question: How many distinct customers placed an order?
+  gold_sql: SELECT COUNT(DISTINCT customer_id) AS customer_count FROM orders ORDER BY customer_count
+  category: aggregate
+  difficulty: medium
+- id: q017
+  question: Which statuses have more than 150 orders?
+  gold_sql: SELECT status, COUNT(*) AS order_count FROM orders GROUP BY status HAVING COUNT(*) > 150 ORDER BY order_count DESC, status
+  category: group_having
+  difficulty: medium
+- id: q018
+  question: Which product categories average more than 100 in price?
+  gold_sql: SELECT category, AVG(price) AS average_price FROM products GROUP BY category HAVING AVG(price) > 100 ORDER BY average_price DESC, category
+  category: group_having
+  difficulty: medium
+- id: q019
+  question: Which customers have at least eight orders?
+  gold_sql: SELECT c.id, c.name, COUNT(o.id) AS order_count FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name HAVING COUNT(o.id) >= 8 ORDER BY order_count DESC, c.id
+  category: group_having
+  difficulty: hard
+- id: q020
+  question: Which products appear in more than 50 order items?
+  gold_sql: SELECT p.id, p.name, COUNT(oi.id) AS item_count FROM products AS p JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.id, p.name HAVING COUNT(oi.id) > 50 ORDER BY item_count DESC, p.id
+  category: group_having
+  difficulty: hard
+- id: q021
+  question: How many orders were placed in each year?
+  gold_sql: SELECT EXTRACT(YEAR FROM ordered_at) AS order_year, COUNT(*) AS order_count FROM orders GROUP BY EXTRACT(YEAR FROM ordered_at) ORDER BY order_year
+  category: date
+  difficulty: medium
+- id: q022
+  question: What was the order total per month in 2024?
+  gold_sql: SELECT DATE_TRUNC('month', ordered_at) AS order_month, SUM(total) AS order_total FROM orders WHERE EXTRACT(YEAR FROM ordered_at) = 2024 GROUP BY DATE_TRUNC('month', ordered_at) ORDER BY order_month
+  category: date
+  difficulty: medium
+- id: q023
+  question: List the first 50 customers by creation date.
+  gold_sql: SELECT id, name, created_at FROM customers ORDER BY created_at, id LIMIT 50
+  category: date
+  difficulty: easy
+- id: q024
+  question: Count orders by calendar day for the first ten active days.
+  gold_sql: SELECT DATE_TRUNC('day', ordered_at) AS order_day, COUNT(*) AS order_count FROM orders GROUP BY DATE_TRUNC('day', ordered_at) ORDER BY order_day LIMIT 10
+  category: date
+  difficulty: medium
+- id: q025
+  question: Rank products from most to least expensive.
+  gold_sql: SELECT id, name, price, ROW_NUMBER() OVER (ORDER BY price DESC, id) AS price_rank FROM products ORDER BY price_rank
+  category: window
+  difficulty: medium
+- id: q026
+  question: Rank products by price inside each category.
+  gold_sql: SELECT id, name, category, price, DENSE_RANK() OVER (PARTITION BY category ORDER BY price DESC) AS category_rank FROM products ORDER BY category, category_rank, id
+  category: window
+  difficulty: medium
+- id: q027
+  question: Show the running order total for the first 50 orders.
+  gold_sql: SELECT id, total, SUM(total) OVER (ORDER BY id) AS running_total FROM orders WHERE id <= 50 ORDER BY id
+  category: window
+  difficulty: medium
+- id: q028
+  question: Show each of the first 50 orders and the previous order total.
+  gold_sql: SELECT id, total, LAG(total) OVER (ORDER BY id) AS previous_total FROM orders WHERE id <= 50 ORDER BY id
+  category: window
+  difficulty: medium
+- id: q029
+  question: Use a named result to list expensive products.
+  gold_sql: WITH expensive AS (SELECT id, name, price FROM products WHERE price >= 200) SELECT id, name, price FROM expensive ORDER BY price DESC, id
+  category: cte
+  difficulty: medium
+- id: q030
+  question: Use a named result to count the first 100 orders by status.
+  gold_sql: WITH early_orders AS (SELECT id, status FROM orders WHERE id <= 100) SELECT status, COUNT(*) AS order_count FROM early_orders GROUP BY status ORDER BY status
+  category: cte
+  difficulty: medium
+- id: q031
+  question: Use named results to show the first 50 items with product names.
+  gold_sql: WITH selected_items AS (SELECT id, product_id, quantity FROM order_items WHERE id <= 50), named_products AS (SELECT id, name FROM products) SELECT si.id, np.name, si.quantity FROM selected_items AS si JOIN named_products AS np ON np.id = si.product_id ORDER BY si.id
+  category: cte
+  difficulty: hard
+- id: q032
+  question: Use a named result to list the top 75 customer order totals above 5000.
+  gold_sql: WITH customer_totals AS (SELECT customer_id, SUM(total) AS total_spent FROM orders GROUP BY customer_id) SELECT c.id, c.name, ct.total_spent FROM customer_totals AS ct JOIN customers AS c ON c.id = ct.customer_id WHERE ct.total_spent > 5000 ORDER BY ct.total_spent DESC, c.id LIMIT 75
+  category: cte
+  difficulty: hard
+- id: q033
+  question: Which products cost more than the average product price?
+  gold_sql: SELECT id, name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price DESC, id
+  category: subquery
+  difficulty: medium
+- id: q034
+  question: List the first 75 customers by ID who have placed a delivered order.
+  gold_sql: SELECT id, name FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'delivered') ORDER BY id LIMIT 75
+  category: subquery
+  difficulty: medium
+- id: q035
+  question: Which products appear in the first 20 orders?
+  gold_sql: SELECT id, name FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id <= 20) ORDER BY id
+  category: subquery
+  difficulty: medium
+- id: q036
+  question: List the 75 highest-total orders above the average order total.
+  gold_sql: SELECT id, total FROM orders WHERE total > (SELECT AVG(total) FROM orders) ORDER BY total DESC, id LIMIT 75
+  category: subquery
+  difficulty: medium
+- id: q037
+  question: Combine customer IDs 1 to 20 with product IDs 1 to 20.
+  gold_sql: SELECT id FROM customers WHERE id <= 20 UNION SELECT id FROM products WHERE id <= 20 ORDER BY id
+  category: set_op
+  difficulty: medium
+- id: q038
+  question: Find IDs shared by the first 30 customers and first 20 products.
+  gold_sql: SELECT id FROM customers WHERE id <= 30 INTERSECT SELECT id FROM products WHERE id <= 20 ORDER BY id
+  category: set_op
+  difficulty: medium
+- id: q039
+  question: Find customer IDs 1 to 30 that are not product IDs 1 to 20.
+  gold_sql: SELECT id FROM customers WHERE id <= 30 EXCEPT SELECT id FROM products WHERE id <= 20 ORDER BY id
+  category: set_op
+  difficulty: medium
+- id: q040
+  question: Combine the first ten customer and product names with source labels.
+  gold_sql: SELECT name, 'customer' AS source FROM customers WHERE id <= 10 UNION ALL SELECT name, 'product' AS source FROM products WHERE id <= 10 ORDER BY source, name
+  category: set_op
+  difficulty: medium

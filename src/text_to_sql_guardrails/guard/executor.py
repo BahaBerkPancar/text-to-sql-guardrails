@@ -8,6 +8,7 @@ from decimal import Decimal
 from time import perf_counter
 from typing import Any
 
+from psycopg import Error as PsycopgError
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
@@ -15,6 +16,10 @@ from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
 class QueryError(Exception):
     """Base class for safe, user-facing database failures."""
+
+    def __init__(self, message: str, *, sqlstate: str | None = None) -> None:
+        super().__init__(message)
+        self.sqlstate = sqlstate
 
 
 class QueryTimeout(QueryError):
@@ -48,13 +53,17 @@ def _json_value(value: Any) -> Any:
     return str(value)
 
 
-def _safe_error(error: SQLAlchemyError) -> QueryError:
-    sqlstate = getattr(getattr(error, "orig", None), "sqlstate", None)
+def _safe_error(error: SQLAlchemyError | PsycopgError) -> QueryError:
+    sqlstate = getattr(error, "sqlstate", None) or getattr(
+        getattr(error, "orig", None), "sqlstate", None
+    )
     if sqlstate == "57014":
-        return QueryTimeout("Query exceeded the statement timeout")
+        return QueryTimeout("Query exceeded the statement timeout", sqlstate=sqlstate)
     if sqlstate in {"25006", "42501"}:
-        return QueryPermissionDenied("Query was denied by the read-only database role")
-    return QueryFailed("Database query failed")
+        return QueryPermissionDenied(
+            "Query was denied by the read-only database role", sqlstate=sqlstate
+        )
+    return QueryFailed("Database query failed", sqlstate=sqlstate)
 
 
 def run_readonly(
@@ -80,9 +89,13 @@ def run_readonly(
                 driver_sql = sql
                 if engine.dialect.paramstyle in {"format", "pyformat"}:
                     driver_sql = driver_sql.replace("%", "%%")
-                result = connection.exec_driver_sql(driver_sql)
-                columns = list(result.keys())
-                fetched = result.fetchmany(max_rows + 1)
+                dbapi_connection = connection.connection.driver_connection
+                with dbapi_connection.cursor() as cursor:
+                    # Prepared execution forces psycopg's extended protocol,
+                    # which rejects multiple commands in one execute.
+                    cursor.execute(driver_sql, {}, prepare=True)
+                    columns = [column.name for column in cursor.description or []]
+                    fetched = cursor.fetchmany(max_rows + 1)
                 truncated = len(fetched) > max_rows
                 rows = [
                     [_json_value(value) for value in row] for row in fetched[:max_rows]
@@ -90,7 +103,7 @@ def run_readonly(
             finally:
                 if transaction.is_active:
                     transaction.rollback()
-    except DBAPIError as error:
+    except (DBAPIError, PsycopgError) as error:
         raise _safe_error(error) from None
     except SQLAlchemyError:
         raise QueryFailed("Database query failed") from None

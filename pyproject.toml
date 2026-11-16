@@ -13,10 +13,12 @@ dependencies = [
     "pydantic-settings>=2.6",
     "sqlglot>=30.31.0",
     "anthropic>=2.8.0",
+    "pyyaml>=6.0",
 ]
 
 [project.scripts]
 t2s-setup = "text_to_sql_guardrails.setup:main"
+t2s-bench = "text_to_sql_guardrails.bench.guardrails:main"
 
 [tool.pytest.ini_options]
 markers = ["pg: requires TEST_DATABASE_URL pointing to a disposable PostgreSQL database"]
