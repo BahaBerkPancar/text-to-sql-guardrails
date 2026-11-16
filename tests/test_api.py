@@ -15,6 +15,43 @@ def test_health(client):
     assert client.get("/health").json() == {"status": "ok"}
 
 
+def test_demo_page_has_strict_csp(client):
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert "text-to-sql guardrails" in response.text
+    csp = response.headers["content-security-policy"]
+    assert "default-src 'self'" in csp
+    assert "script-src 'self'" in csp
+    assert "object-src 'none'" in csp
+    assert "frame-ancestors 'none'" in csp
+    assert "unsafe-inline" not in csp
+    assert "unsafe-eval" not in csp
+
+
+def test_demo_static_assets_are_served(client):
+    javascript = client.get("/static/app.js")
+    stylesheet = client.get("/static/style.css")
+
+    assert javascript.status_code == 200
+    assert javascript.headers["content-type"].startswith("text/javascript")
+    assert stylesheet.status_code == 200
+    assert stylesheet.headers["content-type"].startswith("text/css")
+
+
+def test_demo_javascript_never_uses_inner_html(client):
+    javascript = client.get("/static/app.js").text
+
+    for sink in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write"):
+        assert sink not in javascript
+
+
+@pytest.mark.parametrize("path", ["/static/../main.py", "/static/%2e%2e/main.py"])
+def test_static_mount_blocks_traversal(client, path):
+    assert client.get(path).status_code == 404
+
+
 def test_schema_exposes_only_policy_columns(client):
     response = client.get("/schema")
 

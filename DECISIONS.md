@@ -2,6 +2,21 @@
 
 Newest first. One entry per decision: date, what was decided, why, and what was rejected.
 
+## 2026-11-17 – Keep the showcase static, local, and reproducible
+The demo is plain HTML, CSS, and JavaScript served by FastAPI from the application package. It has
+no build step, external asset host, or CDN, so it works in the Docker image and without model
+credentials. A strict self-only Content Security Policy rejects inline and third-party code, and
+API values are rendered with DOM nodes and `textContent`. A JavaScript framework and templating API
+data into HTML strings were rejected because the small interface does not justify their dependency
+or injection surface.
+
+The recorded GIF uses the existing system Chrome against an already-running server and assembles
+five fixed screenshots with the existing ffmpeg installation. The recorder owns a temporary Chrome
+profile, starts no service, and calls only `/health`, `/schema`, and `/query`; Playwright and a
+downloaded browser were rejected to keep recording dependencies and network setup out of the
+project. URL-fragment parameters provide deterministic pre-fill and auto-run behavior without
+changing the HTTP API.
+
 ## 2026-11-17 – Make live benchmarking explicit, comparable, and reproducible
 Live-model benchmark commands estimate the worst-case cost and stop before constructing a model
 client unless `--yes-spend` is present. Implicit paid calls were rejected because a typo or routine
